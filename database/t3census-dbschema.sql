@@ -40,3 +40,38 @@ ON DELETE CASCADE
 ON UPDATE CASCADE,
 PRIMARY KEY (host_id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE twitter_user (
+user_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+user_name VARCHAR(255) DEFAULT NULL,
+twitter_id BIGINT UNSIGNED NOT NULL,
+PRIMARY KEY (user_id),
+UNIQUE KEY unique_user_id (user_name),
+UNIQUE KEY unique_user_name (twitter_id),
+) ENGINE=InnoDB;
+
+CREATE TABLE twitter_tweet (
+tweet_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+tweet_text VARCHAR(255) DEFAULT NULL,
+twitter_id BIGINT UNSIGNED NOT NULL,
+tweet_processed BOOL NOT NULL,
+created DATETIME NOT NULL,
+fk_user_id INT UNSIGNED NOT NULL,
+FOREIGN KEY fk_user_id (fk_user_id)
+REFERENCES twitter_user (user_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE,
+PRIMARY KEY (tweet_id),
+UNIQUE KEY unique_tweet_id (twitter_id),
+) ENGINE=InnoDB;
+
+CREATE TABLE twitter_url(
+url_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+url_text VARCHAR(255) NOT NULL,
+fk_tweet_id BIGINT UNSIGNED NOT NULL,
+FOREIGN KEY fk_tweet_id (fk_tweet_id)
+REFERENCES twitter_tweet (tweet_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE,
+PRIMARY KEY (url_id)
+) ENGINE=InnoDB;
