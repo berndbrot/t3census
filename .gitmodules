@@ -1,0 +1,3 @@
+[submodule "gearman-worker/php/library/tmhOAuth"]
+	path = gearman-worker/php/library/tmhOAuth
+	url = git://github.com/themattharris/tmhOAuth.git
