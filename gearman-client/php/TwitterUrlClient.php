@@ -34,7 +34,9 @@ if (is_array($gearmanStatus)) {
 	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC LIMIT 5")) {
 		while ($row = $res->fetch_assoc()) {
 			$detectionResult = json_decode($client->do("TYPO3HostDetector", $row['url_text']));
-			var_dump($detectionResult);
+			if (is_null($detectionResult->port) || is_null($detectionResult->ip))  continue;
+
+var_dump($detectionResult);
 
 			if (is_object($detectionResult)) {
 				$portId = getPortId($mysqli, $detectionResult->port);
