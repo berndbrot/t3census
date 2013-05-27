@@ -22,6 +22,8 @@ if ($code == 200) {
 	$tweets = json_decode($tmhOAuth->response['response']);
 
 	foreach ($tweets as $rawTweet) {
+		if (!is_array($rawTweet->entities->urls) || count($rawTweet->entities->urls) == 0)  continue;
+
 		$twitterUser = array();
 		$twitterUser['id'] = $rawTweet->user->id;
 		$twitterUser['name'] = $rawTweet->user->screen_name;
