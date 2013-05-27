@@ -77,7 +77,7 @@ class Typo3HostDetectorWorker {
 					}
 					unset($content);
 				} else {
-					$hostname = $urlInfo['protocol'] . $urlInfo['host'] . $urlInfo['port'] . '/' . $urlInfo['path'];
+					$hostname = $urlInfo['protocol'] . $urlInfo['host'] . $urlInfo['port'] . '/';
 
 					$curlInfoFileadmin = $curlInfoUploads = array();
 					$curlErrnoFileadmin = $curlErrnoUploads = 0;
@@ -86,12 +86,27 @@ class Typo3HostDetectorWorker {
 					$this->testTypo3Artefacts($hostname . 'uploads/', $curlInfoUploads, $curlErrnoUploads);
 
 					if ($curlErrnoFileadmin === 0 && $curlErrnoUploads == 0
-						&& $curlInfoFileadmin['http_code'] === 403 && $curlInfoUploads['http_code'] === 403) {
+							&& $curlInfoFileadmin['http_code'] === 403 && $curlInfoUploads['http_code'] === 403) {
 						$result['TYPO3'] = TRUE;
 						$result['TYPO3version'] = FALSE;
 					} else {
-						$result['TYPO3'] = FALSE;
+						$hostname .= $urlInfo['path'];
+
+						$curlInfoFileadmin = $curlInfoUploads = array();
+						$curlErrnoFileadmin = $curlErrnoUploads = 0;
+
+						$this->testTypo3Artefacts($hostname . 'fileadmin/', $curlInfoFileadmin, $curlErrnoFileadmin);
+						$this->testTypo3Artefacts($hostname . 'uploads/', $curlInfoUploads, $curlErrnoUploads);
+
+						if ($curlErrnoFileadmin === 0 && $curlErrnoUploads == 0
+								&& $curlInfoFileadmin['http_code'] === 403 && $curlInfoUploads['http_code'] === 403) {
+							$result['TYPO3'] = TRUE;
+							$result['TYPO3version'] = FALSE;
+						} else {
+							$result['TYPO3'] = FALSE;
+						}
 					}
+
 					unset($curlInfoFileadmin, $curlInfoUploads, $curlErrnoFileadmin, $curlErrnoUploads, $hostname, $content);
 				}
 			}
