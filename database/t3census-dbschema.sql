@@ -48,7 +48,7 @@ user_name VARCHAR(255) DEFAULT NULL,
 twitter_id BIGINT UNSIGNED NOT NULL,
 PRIMARY KEY (user_id),
 UNIQUE KEY unique_user_id (user_name),
-UNIQUE KEY unique_user_name (twitter_id),
+UNIQUE KEY unique_user_name (twitter_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE twitter_tweet (
@@ -63,7 +63,7 @@ REFERENCES twitter_user (user_id)
 ON DELETE CASCADE
 ON UPDATE CASCADE,
 PRIMARY KEY (tweet_id),
-UNIQUE KEY unique_tweet_id (twitter_id),
+UNIQUE KEY unique_tweet_id (fk_user_id,twitter_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE twitter_url(
