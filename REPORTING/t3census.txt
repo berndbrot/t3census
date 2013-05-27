@@ -1,0 +1,15 @@
+mysql> SELECT count(host_id),typo3_versionstring FROM host WHERE typo3_installed = 1 GROUP BY typo3_versionstring;
++----------------+---------------------+
+| count(host_id) | typo3_versionstring |
++----------------+---------------------+
+|              1 | TYPO3 4.1 CMS       |
+|              2 | TYPO3 4.2 CMS       |
+|              1 | TYPO3 4.3 CMS       |
+|              1 | TYPO3 4.4 CMS       |
+|             52 | TYPO3 4.5 CMS       |
+|              4 | TYPO3 4.6 CMS       |
+|             40 | TYPO3 4.7 CMS       |
+|              8 | TYPO3 6.0 CMS       |
+|              1 | TYPO3 6.1 CMS       |
++----------------+---------------------+
+9 rows in set (0.06 sec)
