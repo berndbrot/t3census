@@ -31,7 +31,7 @@ if (is_array($gearmanStatus)) {
 
 #	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE AND t.tweet_text LIKE '%to TYPO3%' ORDER BY t.created ASC")) {
 #	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE AND t.tweet_text LIKE '%TYPO3%' ORDER BY t.created ASC")) {
-	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC")) {
+	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC LIMIT 5")) {
 		while ($row = $res->fetch_assoc()) {
 			$detectionResult = json_decode($client->do("TYPO3HostDetector", $row['url_text']));
 			var_dump($detectionResult);
@@ -70,6 +70,7 @@ function persistHost($mysqli, $serverId, $host) {
 				. "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
 				. ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
 				. "'" . $date->format('Y-m-d H:i:s') . "');");
+			if (!$foo)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
 		} else {
 			$row = $result->fetch_assoc();
 			$hostId = intval($row['host_id']);
@@ -84,7 +85,8 @@ function persistServerPortMapping($mysqli, $serverId, $portId) {
 	if ($result = $mysqli->query("SELECT fk_port_id FROM server_port WHERE fk_port_id = " . intval($portId) . " AND fk_server_id = " . intval($serverId))) {
 
 		if ($result->num_rows == 0) {
-			$mysqli->query("INSERT INTO server_port(fk_port_id,fk_server_id) VALUES (" . intval($portId) . ", " . intval($serverId) . ")");
+			$foo = $mysqli->query("INSERT INTO server_port(fk_port_id,fk_server_id) VALUES (" . intval($portId) . ", " . intval($serverId) . ")");
+			if (!$foo)  echo "error-3: (" . $mysqli->errno . ") " . $mysqli->error;
 		}
 
 		/* free result set */
@@ -99,7 +101,8 @@ function getServerId($mysqli, $server) {
 
 		if ($result->num_rows == 0) {
 			$date = new DateTime();
-			$mysqli->query("INSERT INTO server(server_ip,created) VALUES (INET_ATON('" . mysqli_real_escape_string($mysqli, $server) . "'), '" . $date->format('Y-m-d H:i:s') . "')");
+			$foo = $mysqli->query("INSERT INTO server(server_ip,created) VALUES (INET_ATON('" . mysqli_real_escape_string($mysqli, $server) . "'), '" . $date->format('Y-m-d H:i:s') . "')");
+			if (!$foo)  echo "error-2: (" . $mysqli->errno . ") " . $mysqli->error;
 			$serverId = $mysqli->insert_id;
 		} else {
 			$row = $result->fetch_assoc();
@@ -119,7 +122,8 @@ function getPortId($mysqli, $port) {
 	if ($result = $mysqli->query("SELECT port_id FROM port WHERE port_number=" . intval($port) . " LIMIT 1")) {
 
 		if ($result->num_rows == 0) {
-			$mysqli->query("INSERT INTO port(port_number) VALUES (" . intval($port) . ")");
+			$foo = $mysqli->query("INSERT INTO port(port_number) VALUES (" . intval($port) . ")");
+			if (!$foo)  echo "error-1: (" . $mysqli->errno . ") " . $mysqli->error;
 			$portId = $mysqli->insert_id;
 		} else {
 			$row = $result->fetch_assoc();
