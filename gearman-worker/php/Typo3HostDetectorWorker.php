@@ -43,8 +43,22 @@ class Typo3HostDetectorWorker {
 
 			$result = array();
 			$urlInfo = $this->normalizeUrl($url);
-			$result['ip'] = $curlInfo['primary_ip'];
-			$result['port'] = $curlInfo['primary_port'];
+
+			// new cURL versions provide ip and port
+			if (array_key_exists('primary_ip', $curlInfo) && array_key_exists('primary_port', $curlInfo)) {
+				$result['ip'] = $curlInfo['primary_ip'];
+				$result['port'] = $curlInfo['primary_port'];
+			} else {
+				$ip = gethostbyname($urlInfo['host']);
+				$result['ip'] = ($ip !== $urlInfo['host'] ? $ip : NULL);
+				if ($urlInfo['protocol'] === 'http://') {
+					$result['port'] = 80;
+				} elseif ($urlInfo['protocol'] === 'http://') {
+					$result['port'] = 443;
+				} else {
+					$result['port'] = NULL;
+				}
+			}
 			$result['protocol'] = $urlInfo['protocol'];
 			$result['host'] = $urlInfo['host'];
 			$result['path'] = $urlInfo['path'];
