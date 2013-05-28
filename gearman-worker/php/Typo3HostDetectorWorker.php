@@ -69,7 +69,7 @@ class Typo3HostDetectorWorker {
 				$metaGenerator = $this->parseDomForGenerator($content);
 
 				if (strlen($metaGenerator)) {
-					if (strpos($content, 'TYPO3') !== FALSE) {
+					if (strpos($metaGenerator, 'TYPO3') !== FALSE) {
 						$result['TYPO3'] = TRUE;
 						$result['TYPO3version'] = $metaGenerator;
 					} else {
@@ -196,7 +196,6 @@ class Typo3HostDetectorWorker {
 		if ($generators->length == 0) {
 			// Found one or more descriptions, loop over them
 		} else {
-			$metaGenerator = '';
 			foreach ($generators as $generator) {
 				$metaGenerator .= $generator->value;
 			}
