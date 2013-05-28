@@ -40,11 +40,15 @@ echo(PHP_EOL . $row['url_text']);
 #var_dump($urlInfo);
 
 			if (0 !== strcmp($urlInfo['host'], 'bit.ly')
-					&& 0 !== strcmp($urlInfo['host'], 'tinyurl.com')) {
-				$result = $mysqli->query("SELECT 1 FROM host WHERE host_name LIKE CONCAT('%','" . mysqli_real_escape_string($mysqli, $urlInfo['host']) . "') LIMIT 1;" );
+					&& 0 !== strcmp($urlInfo['host'], 'npub.li')
+					&& 0 !== strcmp($urlInfo['host'], 'ow.ly')
+					&& 0 !== strcmp($urlInfo['host'], 'tinyurl.com')
+					&& 0 !== strcmp($urlInfo['host'], 'xing.com')) {
+				$result = $mysqli->query("SELECT 1 FROM host WHERE created IS NOT NULL AND host_name LIKE CONCAT('%','" . mysqli_real_escape_string($mysqli, $urlInfo['host']) . "') LIMIT 1;" );
 				if ($result->num_rows > 0) {
 					echo(' - PASS');
 					$result->close();
+					$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
 					continue;
 				}
 				$result->close();
@@ -83,9 +87,9 @@ function persistHost($mysqli, $serverId, $host) {
 	#echo("SELECT host_id FROM host WHERE fk_server_id = " . intval($serverId) . " AND host_name = '" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "';");
 	if ($result = $mysqli->query("SELECT host_id FROM host WHERE fk_server_id = " . intval($serverId) . " AND host_name = '" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "';" )) {
 
+		$date = new DateTime();
 		if ($result->num_rows == 0) {
-			$date = new DateTime();
-			$foo = $mysqli->query("INSERT INTO host(host_name,host_domain,fk_server_id,typo3_installed,host_path,typo3_versionstring,created) "
+			$foo1 = $mysqli->query("INSERT INTO host(host_name,host_domain,fk_server_id,typo3_installed,host_path,typo3_versionstring,created) "
 				. "VALUES ('" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "',"
 				. "'" . mysqli_real_escape_string($mysqli, $host->host) . "',"
 				. $serverId . ","
@@ -93,10 +97,18 @@ function persistHost($mysqli, $serverId, $host) {
 				. "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
 				. ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
 				. "'" . $date->format('Y-m-d H:i:s') . "');");
-			if (!$foo)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
+			if (!$foo1)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
 		} else {
 			$row = $result->fetch_assoc();
 			$hostId = intval($row['host_id']);
+			$foo2 = $mysqli->query("UPDATE host SET "
+				. "typo3_installed=" . ($host->TYPO3 ? 1 : 0) . ","
+				. "typo3_versionstring=" . ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
+				. "host_path=" . "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
+				. "created=" . "'" . $date->format('Y-m-d H:i:s') . "'"
+				. " WHERE created IS NULL AND host_id=" .$hostId);
+			if (!$foo2)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
+			echo (PHP_EOL . 'UPDATE');
 		}
 
 		/* free result set */
