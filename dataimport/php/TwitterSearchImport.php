@@ -2,17 +2,17 @@
 require_once 'library/tmhOAuth/tmhOAuth.php';
 
 $tmhOAuth = new tmhOAuth(array(
-	'consumer_key'    => 'fRISmI7Xpc4IfjhzWNVGRQ',
-	'consumer_secret' => 'l28EvcfTAYAHky5SLftODkAmmnsDrfSox2mrEbm2M',
-	'user_token'      => '62495551-A0ZuNCJnYYaVCffOyjdeImISgkGT30RXFhoSmWaSr',
-	'user_secret'     => 'GHwrOiRyvLn2UvtSmgVfDjXJ8AyxpdwzOhUUUusNrE',
+	'consumer_key'    => 'V',
+	'consumer_secret' => 'W',
+	'user_token'      => 'Y',
+	'user_secret'     => 'Z',
 ));
 
 
 $code = $tmhOAuth->request('GET', $tmhOAuth->url('1.1/search/tweets.json'), array(
 	'count' => 180,
 	'q' => 'TYPO3',
-	'since' => '339084095395078144',
+	'since' => '339421244401254400',
 ));
 
 $mysqli = new mysqli("127.0.0.1", "t3census_dbu", "t3census", "t3census_db", 3306);
