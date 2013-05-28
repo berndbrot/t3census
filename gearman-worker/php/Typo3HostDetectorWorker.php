@@ -53,7 +53,7 @@ class Typo3HostDetectorWorker {
 				$result['ip'] = ($ip !== $urlInfo['host'] ? $ip : NULL);
 				if ($urlInfo['protocol'] === 'http://') {
 					$result['port'] = 80;
-				} elseif ($urlInfo['protocol'] === 'http://') {
+				} elseif ($urlInfo['protocol'] === 'https://') {
 					$result['port'] = 443;
 				} else {
 					$result['port'] = NULL;
