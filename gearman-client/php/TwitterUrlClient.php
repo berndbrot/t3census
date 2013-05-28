@@ -31,14 +31,32 @@ if (is_array($gearmanStatus)) {
 
 #	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE AND t.tweet_text LIKE '%to TYPO3%' ORDER BY t.created ASC")) {
 #	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE AND t.tweet_text LIKE '%TYPO3%' ORDER BY t.created ASC")) {
-	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC LIMIT 5")) {
+	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC LIMIT 300")) {
 		while ($row = $res->fetch_assoc()) {
-			$detectionResult = json_decode($client->do("TYPO3HostDetector", $row['url_text']));
-			if (is_null($detectionResult->port) || is_null($detectionResult->ip))  continue;
+#var_dump($row);
+echo(PHP_EOL . $row['url_text']);
 
-var_dump($detectionResult);
+			$urlInfo = normalizeUrl($row['url_text']);
+#var_dump($urlInfo);
+
+			if (0 !== strcmp($urlInfo['host'], 'bit.ly')
+					&& 0 !== strcmp($urlInfo['host'], 'tinyurl.com')) {
+				$result = $mysqli->query("SELECT 1 FROM host WHERE host_name LIKE CONCAT('%','" . mysqli_real_escape_string($mysqli, $urlInfo['host']) . "') LIMIT 1;" );
+				if ($result->num_rows > 0) {
+					echo(' - PASS');
+					$result->close();
+					continue;
+				}
+				$result->close();
+			}
+
+
+			$detectionResult = json_decode($client->do("TYPO3HostDetector", $row['url_text']));
+#var_dump($detectionResult);
 
 			if (is_object($detectionResult)) {
+				if (is_null($detectionResult->port) || is_null($detectionResult->ip))  continue;
+
 				$portId = getPortId($mysqli, $detectionResult->port);
 
 				$serverId = getServerId($mysqli, $detectionResult->ip);
@@ -46,6 +64,8 @@ var_dump($detectionResult);
 				persistServerPortMapping($mysqli, $serverId, $portId);
 				persistHost($mysqli, $serverId, $detectionResult);
 
+				$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
+			} else if (is_bool($detectionResult) && !$detectionResult) {
 				$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
 			}
 		}
@@ -56,6 +76,7 @@ var_dump($detectionResult);
 	}
 
 	mysqli_close($mysqli);
+	echo(PHP_EOL);
 }
 
 function persistHost($mysqli, $serverId, $host) {
@@ -184,5 +205,34 @@ function getStatus($host = '127.0.0.1', $port = 4730) {
 	}
 
 	return $status;
+}
+
+function normalizeUrl($url) {
+	$regex = '#^(.*?//)*([\w\.\-\d]*)(:(\d+))*(/*)(.*)$#';
+	$matches = array();
+	preg_match($regex, $url, $matches);
+
+	$urlInfo['protocol'] = $matches[1];
+	$urlInfo['port'] = $matches[4];
+	$urlInfo['host'] = $matches[2];
+	$urlInfo['path'] = $matches[6];
+
+	if (empty($urlInfo['protocol'])) {
+		$urlInfo['protocol'] = 'http://';
+	}
+
+	$patterns = array();
+	$patterns[0] = '#fileadmin#';
+	$patterns[1] = '#//#';
+	$replacements = array();
+	$replacements[0] = '';
+	$replacements[1] = '/';
+	$urlInfo['path'] = preg_replace($patterns, $replacements, $urlInfo['path']);
+
+	if (!empty($urlInfo['path']) && $urlInfo['path'] == '/') {
+		$urlInfo['path'] = '';
+	}
+
+	return $urlInfo;
 }
 ?>
