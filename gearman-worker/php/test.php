@@ -105,6 +105,10 @@ $url = 'http://typo3.org//news/article/extbase-and-fluid-feature-overview/';
 $url = 'http://web.archive.org/web/20110724075246/http://www.mediamarkt.ch/';
 $url = 'http://www.slideshare.net/mayflowergmbh/html5-und-nodejs-grundlagen?ref=http://it-republik.de/php/news/Slideshow-zu-HTML5-und-Node.js-062186.html';
 $url = 'http://bacolicio.us/http://typo3.org/';
+$url = 'http://git.typo3.org/TYPO3v4/Core.git/history/HEAD:/t3lib/jsfunc.evalfield.js';
+$url = 'http://pyfound.blogspot.de/2013/02/python-trademark-at-risk-in-europe-we.html?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed:+PythonSoftwareFoundationNews+%28Python+Software+Foundation+News%29';
+$url = 'http://www.icondeposit.com/design:116';
+$url = 'http://hsmaker.com/harlemshake.asp?url=http://www.network-publishing.de';
 
 $curlInfo = array();
 $curlErrno = array();
