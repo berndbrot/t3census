@@ -8,9 +8,10 @@
  */
 
 function normalizeUrl($url) {
-	$regex = '#^([a-zA-Z0-9\.\-:]*//)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
+	$regex = '#^([a-zA-Z0-9\.\-]*://)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
 	$matches = array();
 	preg_match($regex, $url, $matches);
+var_dump($matches);
 
 	$urlInfo['protocol'] = $matches[1];
 	$urlInfo['port'] = $matches[4];
@@ -100,6 +101,7 @@ function testTypo3Artefacts($url, &$curlInfo, &$curlErrno) {
 
 
 $url = 'http://typo3.org/support/professional-services/reference/Agency/show//nawinfo-gmbh/';
+$url = 'http://typo3.org//news/article/extbase-and-fluid-feature-overview/';
 
 $curlInfo = array();
 $curlErrno = array();

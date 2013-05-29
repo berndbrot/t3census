@@ -153,7 +153,7 @@ class Typo3HostDetectorWorker {
 	}
 
 	protected function normalizeUrl($url) {
-		$regex = '#^([a-zA-Z0-9\.\-:]*//)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
+		$regex = '#^([a-zA-Z0-9\.\-]*://)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
 		$matches = array();
 		preg_match($regex, $url, $matches);
 

@@ -220,7 +220,7 @@ function getStatus($host = '127.0.0.1', $port = 4730) {
 }
 
 function normalizeUrl($url) {
-	$regex = '#^([a-zA-Z0-9\.\-:]*//)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
+	$regex = '#^([a-zA-Z0-9\.\-]*://)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
 	$matches = array();
 	preg_match($regex, $url, $matches);
 
