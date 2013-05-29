@@ -102,6 +102,9 @@ function testTypo3Artefacts($url, &$curlInfo, &$curlErrno) {
 
 $url = 'http://typo3.org/support/professional-services/reference/Agency/show//nawinfo-gmbh/';
 $url = 'http://typo3.org//news/article/extbase-and-fluid-feature-overview/';
+$url = 'http://web.archive.org/web/20110724075246/http://www.mediamarkt.ch/';
+$url = 'http://www.slideshare.net/mayflowergmbh/html5-und-nodejs-grundlagen?ref=http://it-republik.de/php/news/Slideshow-zu-HTML5-und-Node.js-062186.html';
+$url = 'http://bacolicio.us/http://typo3.org/';
 
 $curlInfo = array();
 $curlErrno = array();
@@ -117,7 +120,9 @@ if ($curlErrno === 0
 
 
 $urlInfo = normalizeUrl($url);
+var_dump($urlInfo);
 
+/*
 $hostname = $urlInfo['protocol'] . $urlInfo['host'] . $urlInfo['port'] . '/' . $urlInfo['path'];
 
 $fileadminUrl = $hostname . 'uploads/';
@@ -140,5 +145,5 @@ testTypo3Artefacts($fileadminUrl, $curlInfo, $curlErrno);
 
 var_dump($curlInfo);
 
-
+*/
 ?>
