@@ -8,7 +8,7 @@
  */
 
 function normalizeUrl($url) {
-	$regex = '#^(.*?//)*([\w\.\-\d]*)(:(\d+))*(/*)(.*)$#';
+	$regex = '#^([a-zA-Z0-9\.\-:]*//)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
 	$matches = array();
 	preg_match($regex, $url, $matches);
 
@@ -99,7 +99,7 @@ function testTypo3Artefacts($url, &$curlInfo, &$curlErrno) {
 
 
 
-$url = 'http://t.co/N2YZSCGZR6';
+$url = 'http://typo3.org/support/professional-services/reference/Agency/show//nawinfo-gmbh/';
 
 $curlInfo = array();
 $curlErrno = array();
