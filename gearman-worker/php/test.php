@@ -43,6 +43,11 @@ $url = 'http://git.typo3.org/TYPO3v4/Core.git/history/HEAD:/t3lib/jsfunc.evalfie
 $url = 'http://pyfound.blogspot.de/2013/02/python-trademark-at-risk-in-europe-we.html?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed:+PythonSoftwareFoundationNews+%28Python+Software+Foundation+News%29';
 $url = 'http://www.icondeposit.com/design:116';
 $url = 'http://hsmaker.com/harlemshake.asp?url=http://www.network-publishing.de';
+$url = 'http://www.cultofmac.com/apple-may-be-invisibly-filtering-your-outgoing-mobileme-email-exclusive/103703?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed:+cultofmac/bFow+%28Cult+of+Mac%29';
+$url = 'http://webcache.googleusercontent.com/search?q=cache:Ph3kNuO48m0J:https://www.gema.de/impressum.html+gema.de/impressum&cd=1&hl=de&ct=clnk&gl=de&client=firefox-a&source=www.google.de';
+$url = 'http://www.gamona.de/videos/gamescom-2011,gamona-pwned-rtl-hq:video,1978237.html';
+$url = 'http://it.wikipedia.org/wiki/Wikipedia:Comunicato_4_ottobre_2011/en';
+$url = 'http://www.youtube.com/api/moderator/g/yt/?channame=bundesregierung&hl=de&embed=http://www.youtube.com/bundesregierung#8/e=be767';
 
 $curlInfo = array();
 $curlErrno = array();
