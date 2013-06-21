@@ -15,8 +15,8 @@ class Typo3HostDetectorWorker {
 	private $userAgent = 'T3census-Crawler/1.0';
 
 	public function __construct($host = '127.0.0.1', $port = 4730) {
-		$this->host=$host;
-		$this->port=$port;
+		$this->host = $host;
+		$this->port = $port;
 	}
 
 	public function setUp() {
