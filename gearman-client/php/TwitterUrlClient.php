@@ -37,7 +37,7 @@ if (is_array($gearmanStatus)) {
 	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC LIMIT 300")) {
 		while ($row = $res->fetch_assoc()) {
 #var_dump($row);
-echo(PHP_EOL . $row['url_text'] . PHP_EOL);
+echo(PHP_EOL . $row['url_text']);
 
 			$normalizer = new UrlNormalizer();
 			$urlInfo = $normalizer->setOriginUrl($row['url_text'])->getNormalizedUrl();
@@ -49,6 +49,7 @@ echo(PHP_EOL . $row['url_text'] . PHP_EOL);
 					&& 0 !== strcmp($urlInfo['host'], 'j.mp')
 					&& 0 !== strcmp($urlInfo['host'], 'kck.st')
 					&& 0 !== strcmp($urlInfo['host'], 'npub.li')
+					&& 0 !== strcmp($urlInfo['host'], 'nkirch.de')
 					&& 0 !== strcmp($urlInfo['host'], 'ow.ly')
 					&& 0 !== strcmp($urlInfo['host'], 't3n.me')
 					&& 0 !== strcmp($urlInfo['host'], 'tinyurl.com')
