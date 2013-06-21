@@ -1,4 +1,5 @@
 <?php
+require_once 'UrlFetcher.php';
 require_once 'UrlNormalizer.php';
 
 /**
@@ -13,6 +14,7 @@ class Typo3HostDetectorWorker {
 	private $host;
 	private $port;
 	private $gearmanWorker;
+	private $urlFetcher;
 	private $urlNormalizer;
 
 	private $userAgent = 'T3census-Crawler/1.0';
@@ -32,44 +34,26 @@ class Typo3HostDetectorWorker {
 		$result = FALSE;
 		$url = $job->workload();
 
-		$curlInfo = array();
-		$curlErrno = 0;
 		$content = '';
 
-		$this->resolveTargetUrl($url, $content, $curlInfo, $curlErrno);
+		$fetcher = $this->getUrlFetcher()->setUrl($url);
+		$fetcher->fetchUrl(UrlFetcher::HTTP_GET, TRUE);
 
-		if ($curlErrno === 0) {
-			if (is_array($curlInfo) && array_key_exists('redirect_count', $curlInfo) && $curlInfo['redirect_count'] >= 0
-				&& array_key_exists('url', $curlInfo) && !empty($curlInfo['url'])) {
-				$url = $curlInfo['url'];
-			}
+		if ($fetcher->getErrno() === 0) {
+			if ($fetcher->getNumRedirects() >= 0)  $url = $fetcher->getUrl();
 
 			$result = array();
 
 			$urlInfo = $this->getUrlNormalizer()->setOriginUrl($url)->getNormalizedUrl();
 
-			// new cURL versions provide ip and port
-			if (array_key_exists('primary_ip', $curlInfo) && array_key_exists('primary_port', $curlInfo)) {
-				$result['ip'] = $curlInfo['primary_ip'];
-				$result['port'] = $curlInfo['primary_port'];
-			} else {
-				$ip = gethostbyname($urlInfo['host']);
-				$result['ip'] = ($ip !== $urlInfo['host'] ? $ip : NULL);
-				if ($urlInfo['protocol'] === 'http://') {
-					$result['port'] = 80;
-				} elseif ($urlInfo['protocol'] === 'https://') {
-					$result['port'] = 443;
-				} else {
-					$result['port'] = NULL;
-				}
-			}
+			$result['ip'] = $fetcher->getIpAddress();
+			$result['port'] = $fetcher->getPort();
 			$result['protocol'] = $urlInfo['protocol'];
 			$result['host'] = $urlInfo['host'];
 			$result['path'] = $urlInfo['path'];
 
-			unset($curlInfo, $curlErrno);
-
-			if (strlen($content)) {
+			$content = $fetcher->getBody();
+			if (is_string($content) && strlen($content)) {
 				$metaGenerator = $this->parseDomForGenerator($content);
 
 				if (strlen($metaGenerator)) {
@@ -83,27 +67,37 @@ class Typo3HostDetectorWorker {
 				} else {
 					$hostname = $urlInfo['protocol'] . $urlInfo['host'] . $urlInfo['port'] . '/';
 
-					$curlInfoFileadmin = $curlInfoUploads = array();
-					$curlErrnoFileadmin = $curlErrnoUploads = 0;
+					$fetcherHttpCodeFileadmin = $fetcherHttpCodeUploads = NULL;
+					$fetcherErrnoFileadmin = $fetcherErrnoUploads = 0;
 
-					$this->testTypo3Artefacts($hostname . 'fileadmin/', $curlInfoFileadmin, $curlErrnoFileadmin);
-					$this->testTypo3Artefacts($hostname . 'uploads/', $curlInfoUploads, $curlErrnoUploads);
+					$fetcher->reset()->setUrl($hostname . 'fileadmin/');
+					$fetcherHttpCodeFileadmin = $fetcher->getResponseHttpCode();
+					$fetcherErrnoFileadmin = $fetcher->getErrno();
 
-					if ($curlErrnoFileadmin === 0 && $curlErrnoUploads == 0
-							&& $curlInfoFileadmin['http_code'] === 403 && $curlInfoUploads['http_code'] === 403) {
+					$fetcher->reset()->setUrl($hostname . 'uploads/');
+					$fetcherHttpCodeUploads = $fetcher->getResponseHttpCode();
+					$fetcherErrnoUploads = $fetcher->getErrno();
+
+					if ($fetcherErrnoFileadmin === 0 && $fetcherErrnoUploads === 0
+							&& $fetcherHttpCodeFileadmin === 403 && $fetcherHttpCodeUploads === 403) {
 						$result['TYPO3'] = TRUE;
 						$result['TYPO3version'] = FALSE;
 					} else {
 						$hostname .= $urlInfo['path'];
 
-						$curlInfoFileadmin = $curlInfoUploads = array();
-						$curlErrnoFileadmin = $curlErrnoUploads = 0;
+						$fetcherHttpCodeFileadmin = $fetcherHttpCodeUploads = NULL;
+						$fetcherErrnoFileadmin = $fetcherErrnoUploads = 0;
 
-						$this->testTypo3Artefacts($hostname . 'fileadmin/', $curlInfoFileadmin, $curlErrnoFileadmin);
-						$this->testTypo3Artefacts($hostname . 'uploads/', $curlInfoUploads, $curlErrnoUploads);
+						$fetcher->reset()->setUrl($hostname . 'fileadmin/');
+						$fetcherHttpCodeFileadmin = $fetcher->getResponseHttpCode();
+						$fetcherErrnoFileadmin = $fetcher->getErrno();
 
-						if ($curlErrnoFileadmin === 0 && $curlErrnoUploads == 0
-								&& $curlInfoFileadmin['http_code'] === 403 && $curlInfoUploads['http_code'] === 403) {
+						$fetcher->reset()->setUrl($hostname . 'uploads/');
+						$fetcherHttpCodeUploads = $fetcher->getResponseHttpCode();
+						$fetcherErrnoUploads = $fetcher->getErrno();
+
+						if ($fetcherErrnoFileadmin === 0 && $fetcherErrnoUploads === 0
+								&& $fetcherHttpCodeFileadmin === 403 && $fetcherHttpCodeUploads === 403) {
 							$result['TYPO3'] = TRUE;
 							$result['TYPO3version'] = FALSE;
 						} else {
@@ -111,7 +105,7 @@ class Typo3HostDetectorWorker {
 						}
 					}
 
-					unset($curlInfoFileadmin, $curlInfoUploads, $curlErrnoFileadmin, $curlErrnoUploads, $hostname, $content);
+					unset($fetcher, $fetcherHttpCodeFileadmin, $fetcherErrnoFileadmin, $fetcherHttpCodeUploads, $fetcherErrnoUploads, $hostname, $content);
 				}
 			}
 
@@ -120,42 +114,6 @@ class Typo3HostDetectorWorker {
 
 		return json_encode($result);
 	}
-
-	protected function resolveTargetUrl($url, &$content, &$curlInfo, &$curlErrno) {
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $url);
-		curl_setopt($curl, CURLOPT_POST, FALSE);
-		curl_setopt($curl, CURLOPT_HEADER, 0);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'T3census-Crawler/1.0');
-		$content = curl_exec($curl);
-
-		$curlInfo = curl_getinfo($curl);
-		$curlErrno = curl_errno($curl);
-		unset($curl);
-
-		return $content;
-	}
-
-	protected function testTypo3Artefacts($url, &$curlInfo, &$curlErrno) {
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $url);
-		curl_setopt($curl, CURLOPT_POST, FALSE);
-		curl_setopt($curl, CURLOPT_NOBODY, TRUE);
-		curl_setopt($curl, CURLOPT_HEADER, 0);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'T3census-Crawler/1.0');
-		curl_exec($curl);
-
-		$curlInfo = curl_getinfo($curl);
-		$curlErrno = curl_errno($curl);
-		unset($curl);
-	}
-
 
 	protected function parseDomForGenerator($content) {
 		libxml_use_internal_errors(TRUE);
@@ -187,6 +145,14 @@ class Typo3HostDetectorWorker {
 		}
 
 		return $this->urlNormalizer;
+	}
+
+	protected function getUrlFetcher() {
+		if (!is_object($this->urlFetcher) && !($this->urlFetcher instanceof UrlFetcher)) {
+			$this->urlFetcher = new UrlFetcher();
+		}
+
+		return $this->urlFetcher;
 	}
 
 	public function run() {

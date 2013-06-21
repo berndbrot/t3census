@@ -7,54 +7,6 @@
  * To change this template use File | Settings | File Templates.
  */
 
-function normalizeUrl($url) {
-	$regex = '#^([a-zA-Z0-9\.\-]*://)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
-	$matches = array();
-	preg_match($regex, $url, $matches);
-var_dump($matches);
-
-	$urlInfo['protocol'] = $matches[1];
-	$urlInfo['port'] = $matches[4];
-	$urlInfo['host'] = $matches[2];
-	$urlInfo['path'] = $matches[6];
-
-	if (empty($urlInfo['protocol'])) {
-		$urlInfo['protocol'] = 'http://';
-	}
-
-	$patterns = array();
-	$patterns[0] = '#fileadmin#';
-	$patterns[1] = '#//#';
-	$replacements = array();
-	$replacements[0] = '';
-	$replacements[1] = '/';
-	$urlInfo['path'] = preg_replace($patterns, $replacements, $urlInfo['path']);
-
-	if (!empty($urlInfo['path']) && $urlInfo['path'] == '/') {
-		$urlInfo['path'] = '';
-	}
-
-	return $urlInfo;
-}
-
-function resolveTargetUrl($url, &$content, &$curlInfo, &$curlErrno) {
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_POST, FALSE);
-#	curl_setopt($curl, CURLOPT_NOBODY, TRUE);
-	curl_setopt($curl, CURLOPT_HEADER, 0);
-	curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($curl, CURLOPT_USERAGENT, 'T3census-Crawler/1.0');
-	$content = curl_exec($curl);
-
-	$curlInfo = curl_getinfo($curl);
-	$curlErrno = curl_errno($curl);
-
-	return $content;
-}
-
 
 function parseDomForGenerator($content) {
 	libxml_use_internal_errors(TRUE);
@@ -81,25 +33,7 @@ function parseDomForGenerator($content) {
 	return $metaGenerator;
 }
 
-function testTypo3Artefacts($url, &$curlInfo, &$curlErrno) {
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_POST, FALSE);
-	curl_setopt($curl, CURLOPT_NOBODY, TRUE);
-	curl_setopt($curl, CURLOPT_HEADER, 0);
-	curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($curl, CURLOPT_USERAGENT, 'T3census-Crawler/1.0');
-	curl_exec($curl);
-
-	$curlInfo = curl_getinfo($curl);
-	$curlErrno = curl_errno($curl);
-	unset($curl);
-}
-
-
-
+/*
 $url = 'http://typo3.org/support/professional-services/reference/Agency/show//nawinfo-gmbh/';
 $url = 'http://typo3.org//news/article/extbase-and-fluid-feature-overview/';
 $url = 'http://web.archive.org/web/20110724075246/http://www.mediamarkt.ch/';
@@ -124,30 +58,17 @@ if ($curlErrno === 0
 
 
 $urlInfo = normalizeUrl($url);
-var_dump($urlInfo);
+*/
 
 /*
-$hostname = $urlInfo['protocol'] . $urlInfo['host'] . $urlInfo['port'] . '/' . $urlInfo['path'];
-
-$fileadminUrl = $hostname . 'uploads/';
-
-$result = array();
-
-
-
-#var_dump($curlInfo);
-
-#var_dump(parseDomForGenerator($content));
-
-if (strpos($content, 'TYPO3') !== FALSE) {
-	#echo 'YES';
-}
-
-$curlInfo = array();
-$curlErrno = array();
-testTypo3Artefacts($fileadminUrl, $curlInfo, $curlErrno);
-
-var_dump($curlInfo);
-
+require_once 'UrlNormalizer.php';
+$normalizer = new UrlNormalizer();
+$arrUrl = $normalizer->setOriginUrl('http://www.example.org/path')->getNormalizedUrl();
+print_r($arrUrl);
 */
+
+require_once 'UrlFetcher.php';
+$fetcher = new UrlFetcher();
+$fetcher->setUrl('http://www.example.org/path');
+$fetcher->fetchUrl(UrlFetcher::HTTP_GET, TRUE);
 ?>
