@@ -1,4 +1,6 @@
 <?php
+require_once 'UrlNormalizer.php';
+
 /**
  * Created by JetBrains PhpStorm.
  * User: marcus
@@ -11,6 +13,7 @@ class Typo3HostDetectorWorker {
 	private $host;
 	private $port;
 	private $gearmanWorker;
+	private $urlNormalizer;
 
 	private $userAgent = 'T3census-Crawler/1.0';
 
@@ -42,7 +45,8 @@ class Typo3HostDetectorWorker {
 			}
 
 			$result = array();
-			$urlInfo = $this->normalizeUrl($url);
+
+			$urlInfo = $this->getUrlNormalizer()->setOriginUrl($url)->getNormalizedUrl();
 
 			// new cURL versions provide ip and port
 			if (array_key_exists('primary_ip', $curlInfo) && array_key_exists('primary_port', $curlInfo)) {
@@ -152,34 +156,6 @@ class Typo3HostDetectorWorker {
 		unset($curl);
 	}
 
-	protected function normalizeUrl($url) {
-		$regex = '#^([a-zA-Z0-9\.\-]*://)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
-		$matches = array();
-		preg_match($regex, $url, $matches);
-
-		$urlInfo['protocol'] = $matches[1];
-		$urlInfo['port'] = $matches[4];
-		$urlInfo['host'] = $matches[2];
-		$urlInfo['path'] = $matches[6];
-
-		if (empty($urlInfo['protocol'])) {
-			$urlInfo['protocol'] = 'http://';
-		}
-
-		$patterns = array();
-		$patterns[0] = '#fileadmin#';
-		$patterns[1] = '#//#';
-		$replacements = array();
-		$replacements[0] = '';
-		$replacements[1] = '/';
-		$urlInfo['path'] = preg_replace($patterns, $replacements, $urlInfo['path']);
-
-		if (!empty($urlInfo['path']) && $urlInfo['path'] == '/') {
-			$urlInfo['path'] = '';
-		}
-
-		return $urlInfo;
-	}
 
 	protected function parseDomForGenerator($content) {
 		libxml_use_internal_errors(TRUE);
@@ -203,6 +179,14 @@ class Typo3HostDetectorWorker {
 
 		libxml_clear_errors();
 		return $metaGenerator;
+	}
+
+	protected function getUrlNormalizer() {
+		if (!is_object($this->urlNormalizer) && !($this->urlNormalizer instanceof UrlNormalizer)) {
+			$this->urlNormalizer = new UrlNormalizer();
+		}
+
+		return $this->urlNormalizer;
 	}
 
 	public function run() {
