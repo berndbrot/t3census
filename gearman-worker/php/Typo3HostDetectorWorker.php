@@ -55,6 +55,13 @@ class Typo3HostDetectorWorker {
 			$content = $fetcher->getBody();
 			if (is_string($content) && strlen($content)) {
 				$metaGenerator = $this->parseDomForGenerator($content);
+				$cookies = $fetcher->getResponseCookies();
+				$isTypo3Cookies = array();
+				if (is_array($cookies)) {
+					$typo3CookiesKeys = array('fe_typo_user', 'be_typo_user');
+					$cookieKeys = array_keys($cookies);
+					$isTypo3Cookies = array_intersect($typo3CookiesKeys, $cookieKeys);
+				}
 
 				if (strlen($metaGenerator)) {
 					if (strpos($metaGenerator, 'TYPO3') !== FALSE) {
@@ -64,6 +71,9 @@ class Typo3HostDetectorWorker {
 						$result['TYPO3'] = FALSE;
 					}
 					unset($content);
+				} elseif(is_array($isTypo3Cookies) && count($isTypo3Cookies)) {
+					$result['TYPO3'] = TRUE;
+					$result['TYPO3version'] = FALSE;
 				} else {
 					$hostname = $urlInfo['protocol'] . $urlInfo['host'] . $urlInfo['port'] . '/';
 
