@@ -1,4 +1,7 @@
 <?php
+require_once '../../gearman-worker/php/UrlNormalizer.php';
+
+
 /**
  * Created by JetBrains PhpStorm.
  * User: marcus
@@ -34,9 +37,10 @@ if (is_array($gearmanStatus)) {
 	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC LIMIT 300")) {
 		while ($row = $res->fetch_assoc()) {
 #var_dump($row);
-echo(PHP_EOL . $row['url_text']);
+echo(PHP_EOL . $row['url_text'] . PHP_EOL);
 
-			$urlInfo = normalizeUrl($row['url_text']);
+			$normalizer = new UrlNormalizer();
+			$urlInfo = $normalizer->setOriginUrl($row['url_text'])->getNormalizedUrl();
 #var_dump($urlInfo);
 
 			if (0 !== strcmp($urlInfo['host'], 'bit.ly')
@@ -224,32 +228,4 @@ function getStatus($host = '127.0.0.1', $port = 4730) {
 	return $status;
 }
 
-function normalizeUrl($url) {
-	$regex = '#^([a-zA-Z0-9\.\-]*://)*([\w\.\-\d]*)(:(\d+))*(/*)([^:]*)$#';
-	$matches = array();
-	preg_match($regex, $url, $matches);
-
-	$urlInfo['protocol'] = $matches[1];
-	$urlInfo['port'] = $matches[4];
-	$urlInfo['host'] = $matches[2];
-	$urlInfo['path'] = $matches[6];
-
-	if (empty($urlInfo['protocol'])) {
-		$urlInfo['protocol'] = 'http://';
-	}
-
-	$patterns = array();
-	$patterns[0] = '#fileadmin#';
-	$patterns[1] = '#//#';
-	$replacements = array();
-	$replacements[0] = '';
-	$replacements[1] = '/';
-	$urlInfo['path'] = preg_replace($patterns, $replacements, $urlInfo['path']);
-
-	if (!empty($urlInfo['path']) && $urlInfo['path'] == '/') {
-		$urlInfo['path'] = '';
-	}
-
-	return $urlInfo;
-}
 ?>
