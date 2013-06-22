@@ -54,6 +54,11 @@ $url = 'http://www.google.com/finance?client=ob&q=NASDAQ:FB';
 $url = 'http://wiki.typo3.org/User_talk:Alex_schnitzler';
 $url = 'http://tools.pingdom.com/fpt/tZQWuMvtd/http://www.redroot.de';
 
+XML prolog - generator in DOM not working:
+$url= 'http://kamerakind.net';
+$url = 'http://t3uni.typo3-fr.org';
+$url = 'http://www.typovision.de/de/home/';
+
 $curlInfo = array();
 $curlErrno = array();
 $content = '';
