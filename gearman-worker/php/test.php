@@ -53,6 +53,11 @@ $url = 'https://metrics.typo3.org/drilldown/violations/org.typo3:extension-direc
 $url = 'http://www.google.com/finance?client=ob&q=NASDAQ:FB';
 $url = 'http://wiki.typo3.org/User_talk:Alex_schnitzler';
 $url = 'http://tools.pingdom.com/fpt/tZQWuMvtd/http://www.redroot.de';
+$url = 'http://git.typo3.org/Documentation/TYPO3/Book/ExtbaseFluid.git/tree/HEAD:/Documentation';
+$url = 'http://hsmaker.com/harlemshake.asp?url=http://www.rogo.it';
+$url = 'http://m.techcrunch.com/2013/02/26/zuck-bill-gates-jack-dorsey-code-org-film/?icid=tc_tp_fulltxt(2:4';
+$url = 'http://www.chictopia.com/photo/show/813887-What+to+Wear+to+Scare+Off+Creeps-black-chunky-boots-black-furry-coat:-';
+$url = 'http://www.danatranslation.com/index.php?option=com_content&view=article&id=167:time-management&catid=29:blog-posts&Itemid=222';
 
 XML prolog - generator in DOM not working:
 $url= 'http://kamerakind.net';
