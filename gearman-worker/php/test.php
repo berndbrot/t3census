@@ -58,6 +58,7 @@ $url = 'http://hsmaker.com/harlemshake.asp?url=http://www.rogo.it';
 $url = 'http://m.techcrunch.com/2013/02/26/zuck-bill-gates-jack-dorsey-code-org-film/?icid=tc_tp_fulltxt(2:4';
 $url = 'http://www.chictopia.com/photo/show/813887-What+to+Wear+to+Scare+Off+Creeps-black-chunky-boots-black-furry-coat:-';
 $url = 'http://www.danatranslation.com/index.php?option=com_content&view=article&id=167:time-management&catid=29:blog-posts&Itemid=222';
+$url = 'http://de.wikipedia.org/wiki/Hilfe:VisualEditor';
 
 XML prolog - generator in DOM not working:
 $url= 'http://kamerakind.net';
