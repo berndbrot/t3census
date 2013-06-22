@@ -48,6 +48,11 @@ $url = 'http://webcache.googleusercontent.com/search?q=cache:Ph3kNuO48m0J:https:
 $url = 'http://www.gamona.de/videos/gamescom-2011,gamona-pwned-rtl-hq:video,1978237.html';
 $url = 'http://it.wikipedia.org/wiki/Wikipedia:Comunicato_4_ottobre_2011/en';
 $url = 'http://www.youtube.com/api/moderator/g/yt/?channame=bundesregierung&hl=de&embed=http://www.youtube.com/bundesregierung#8/e=be767';
+$url = 'http://www.ftd.de/it-medien/it-telekommunikation/:einigung-auf-neuen-standard-nokia-zieht-im-sim-streit-die-patentkarte/70015786.html#link_position=300_26&utm_source=newsletter&utm_medium=unternehmen_persoenlich_text&utm_campaign=%campaign';
+$url = 'https://metrics.typo3.org/drilldown/violations/org.typo3:extension-direct_mail';
+$url = 'http://www.google.com/finance?client=ob&q=NASDAQ:FB';
+$url = 'http://wiki.typo3.org/User_talk:Alex_schnitzler';
+$url = 'http://tools.pingdom.com/fpt/tZQWuMvtd/http://www.redroot.de';
 
 $curlInfo = array();
 $curlErrno = array();
