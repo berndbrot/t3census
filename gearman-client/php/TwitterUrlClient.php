@@ -44,16 +44,30 @@ echo(PHP_EOL . $row['url_text']);
 #var_dump($urlInfo);
 
 			if (0 !== strcmp($urlInfo['host'], 'bit.ly')
+					&& 0 !== strcmp($urlInfo['host'], 'buff.ly')
+					&& 0 !== strcmp($urlInfo['host'], 'csc0.ly')
+					&& 0 !== strcmp($urlInfo['host'], 'eepurl.com')
 					&& 0 !== strcmp($urlInfo['host'], 'fb.me')
+					&& 0 !== strcmp($urlInfo['host'], 'dlvr.it')
+					&& 0 !== strcmp($urlInfo['host'], 'goo.gl')
+					&& 0 !== strcmp($urlInfo['host'], 'indu.st')
 					&& 0 !== strcmp($urlInfo['host'], 'is.gd')
 					&& 0 !== strcmp($urlInfo['host'], 'j.mp')
 					&& 0 !== strcmp($urlInfo['host'], 'kck.st')
+					&& 0 !== strcmp($urlInfo['host'], 'krz.ch')
+					&& 0 !== strcmp($urlInfo['host'], 'lnkr.ch')
+					&& 0 !== strcmp($urlInfo['host'], 'moreti.me')
+					&& 0 !== strcmp($urlInfo['host'], 'myurl.to')
 					&& 0 !== strcmp($urlInfo['host'], 'npub.li')
 					&& 0 !== strcmp($urlInfo['host'], 'nkirch.de')
+					&& 0 !== strcmp($urlInfo['host'], 'opnstre.am')
 					&& 0 !== strcmp($urlInfo['host'], 'ow.ly')
+					&& 0 !== strcmp($urlInfo['host'], 'shar.es')
 					&& 0 !== strcmp($urlInfo['host'], 't3n.me')
 					&& 0 !== strcmp($urlInfo['host'], 'tinyurl.com')
-					&& 0 !== strcmp($urlInfo['host'], 'xing.com')) {
+					&& 0 !== strcmp($urlInfo['host'], 'ur1.ca')
+					&& 0 !== strcmp($urlInfo['host'], 'xing.com')
+					&& 0 !== strcmp($urlInfo['host'], 'zite.to')) {
 				$result = $mysqli->query("SELECT 1 FROM host WHERE created IS NOT NULL AND host_name LIKE CONCAT('%','" . mysqli_real_escape_string($mysqli, $urlInfo['host']) . "') LIMIT 1;" );
 				if ($result->num_rows > 0) {
 					echo(' - PASS');
