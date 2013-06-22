@@ -43,7 +43,8 @@ echo(PHP_EOL . $row['url_text']);
 			$urlInfo = $normalizer->setOriginUrl($row['url_text'])->getNormalizedUrl();
 #var_dump($urlInfo);
 
-			if (0 !== strcmp($urlInfo['host'], 'bit.ly')
+			if (0 !== strcmp($urlInfo['host'], 'b-gat.es')
+					&& 0 !== strcmp($urlInfo['host'], 'bit.ly')
 					&& 0 !== strcmp($urlInfo['host'], 'buff.ly')
 					&& 0 !== strcmp($urlInfo['host'], 'csc0.ly')
 					&& 0 !== strcmp($urlInfo['host'], 'eepurl.com')
@@ -60,6 +61,7 @@ echo(PHP_EOL . $row['url_text']);
 					&& 0 !== strcmp($urlInfo['host'], 'myurl.to')
 					&& 0 !== strcmp($urlInfo['host'], 'npub.li')
 					&& 0 !== strcmp($urlInfo['host'], 'nkirch.de')
+					&& 0 !== strcmp($urlInfo['host'], 'nkor.de')
 					&& 0 !== strcmp($urlInfo['host'], 'opnstre.am')
 					&& 0 !== strcmp($urlInfo['host'], 'ow.ly')
 					&& 0 !== strcmp($urlInfo['host'], 'shar.es')
