@@ -8,29 +8,29 @@ mysql> SELECT count(host_id),typo3_versionstring FROM host WHERE typo3_installed
 |              4 | TYPO3 4.1 CMS       |
 |             13 | TYPO3 4.2 CMS       |
 |             10 | TYPO3 4.3 CMS       |
-|             15 | TYPO3 4.4 CMS       |
-|            261 | TYPO3 4.5 CMS       |
-|             54 | TYPO3 4.6 CMS       |
-|            104 | TYPO3 4.7 CMS       |
+|             18 | TYPO3 4.4 CMS       |
+|            323 | TYPO3 4.5 CMS       |
+|             60 | TYPO3 4.6 CMS       |
+|            134 | TYPO3 4.7 CMS       |
 |             42 | TYPO3 6.0 CMS       |
 |             14 | TYPO3 6.1 CMS       |
 +----------------+---------------------+
-12 rows in set (0.03 sec)
+12 rows in set (0.06 sec)
 
 
 mysql> SELECT COUNT(host_id) FROM host WHERE typo3_installed;
 +----------------+
 | COUNT(host_id) |
 +----------------+
-|            522 |
+|            623 |
 +----------------+
-1 row in set (0.02 sec)
+1 row in set (0.11 sec)
 
 
 mysql> SELECT COUNT(DISTINCT host_domain) FROM host WHERE typo3_installed;
 +-----------------------------+
 | COUNT(DISTINCT host_domain) |
 +-----------------------------+
-|                         471 |
+|                         535 |
 +-----------------------------+
-1 row in set (0.03 sec)
+1 row in set (0.10 sec)
