@@ -59,6 +59,8 @@ $url = 'http://m.techcrunch.com/2013/02/26/zuck-bill-gates-jack-dorsey-code-org-
 $url = 'http://www.chictopia.com/photo/show/813887-What+to+Wear+to+Scare+Off+Creeps-black-chunky-boots-black-furry-coat:-';
 $url = 'http://www.danatranslation.com/index.php?option=com_content&view=article&id=167:time-management&catid=29:blog-posts&Itemid=222';
 $url = 'http://de.wikipedia.org/wiki/Hilfe:VisualEditor';
+$url = 'http://mp3stream1.apasf.apa.at:8000/';
+$url = 'http://jira.phoenix.typo3.org:8080/browse/PHX-57?focusedCommentId=10028&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-10028';
 
 XML prolog - generator in DOM not working:
 $url= 'http://kamerakind.net';
