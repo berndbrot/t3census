@@ -1,20 +1,11 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: marcus
- * Date: 27.06.13
- * Time: 00:20
- * To change this template use File | Settings | File Templates.
- */
 
-ini_set('default_socket_timeout', 10);
+$dir = dirname(__FILE__);
+$libraryDir = realpath($dir . '/../../library/php');
+$vendorDir = realpath($dir . '/../../vendor');
 
-// Encode the credentials and create the stream context.
-$acctKey = '';
-$rootUri = 'https://api.datamarket.azure.com/Bing/Search';
-
-
-
+require_once $libraryDir . '/Api/Bing/BingApi.php';
+require_once $vendorDir . '/autoload.php';
 
 
 $gearmanHost = '127.0.0.1';
@@ -34,20 +25,15 @@ if (is_array($gearmanStatus)) {
 			.' FROM server s RIGHT JOIN host h ON (s.server_id = h.fk_server_id)'
 			.' WHERE s.updated IS NULL AND h.typo3_installed=1'
 			.' GROUP BY s.server_id'
-			.' HAVING typo3hosts > 1'
+			.' HAVING typo3hosts >= 1'
 			.' ORDER BY typo3hosts ASC LIMIT 100;';
+    $query = 'SELECT s.server_id,INET_NTOA(s.server_ip) AS server_ip FROM server s WHERE s.updated IS NULL LIMIT 1;';
 	if ($res = $mysqli->query($query)) {
 
 		$date = new DateTime();
 
-		$auth = base64_encode("$acctKey:$acctKey");
-		$data = array(
-			'http' => array(
-				'request_fulluri' => true,
-				'ignore_errors' => FALSE,
-				'header' => "Authorization: Basic $auth")
-		);
-
+		$bingApi = new BingApi();
+		$bingApi->setAccountKey('')->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
 
 
 		while ($row = $res->fetch_assoc()) {
@@ -55,30 +41,8 @@ if (is_array($gearmanStatus)) {
 
 			echo(PHP_EOL . $row['server_id'] . ' ' . $row['server_ip']);
 
-			$query = urlencode('\'ip:' . $row['server_ip'] . '\'');
-			$offset = 0;
-			$requestUri = $rootUri . '/Web?$format=json&Query=' . $query . '&$skip=' . strval($offset);
-
-			for($i=0; $i< 5; $i++) {
-				$context = stream_context_create($data);
-				$response = file_get_contents($requestUri, 0, $context);
-
-				$jsonObj = json_decode($response);
-				$urls = array_merge($urls, extractUrlsFrom($jsonObj));
-
-				if (!property_exists($jsonObj->d, '__next') || !is_string($jsonObj->d->__next) || empty($jsonObj->d->__next)) {
-					break;
-				} else {
-					#echo(PHP_EOL);
-					#var_dump($jsonObj->d->__next);
-				}
-
-				$offset += 50;
-				$requestUri = $requestUri = $rootUri . '/Web?$format=json&Query=' . $query . '&$skip=' . strval($offset);
-			}
-
-			var_dump($urls);
-
+			$urls = $bingApi->setQuery('ip:' . $row['server_ip'])->getResults();
+			print_r($urls);
 
 
 			foreach($urls as $url) {
@@ -109,6 +73,7 @@ if (is_array($gearmanStatus)) {
 			$queryUpdateOriginServerStatus = $mysqli->query($queryUpdateOriginServer);
 			if (!$queryUpdateOriginServerStatus)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
 		}
+		$bingApi->reset();
 	}
 
 	mysqli_close($mysqli);
