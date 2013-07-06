@@ -4,7 +4,6 @@ $dir = dirname(__FILE__);
 $libraryDir = realpath($dir . '/../../library/php');
 $vendorDir = realpath($dir . '/../../vendor');
 
-require_once $libraryDir . '/Api/Bing/BingApi.php';
 require_once $vendorDir . '/autoload.php';
 
 
@@ -32,21 +31,17 @@ if (is_array($gearmanStatus)) {
 
 		$date = new DateTime();
 
-		$bingApi = new BingApi();
-		$bingApi->setAccountKey('')->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
-
-
 		while ($row = $res->fetch_assoc()) {
 			$urls = array();
 
 			echo(PHP_EOL . $row['server_id'] . ' ' . $row['server_ip']);
 
-			$urls = $bingApi->setQuery('ip:' . $row['server_ip'])->getResults();
-			print_r($urls);
+			$urls = json_decode($client->do('ReverseIpLookup', $row['server_ip']));
+print_r($urls);
 
 
 			foreach($urls as $url) {
-				$detectionResult = json_decode($client->do("TYPO3HostDetector", $url));
+				$detectionResult = json_decode($client->do('TYPO3HostDetector', $url));
 #var_dump($detectionResult);
 
 				if (is_object($detectionResult)) {
