@@ -68,7 +68,6 @@ print_r($urls);
 			$queryUpdateOriginServerStatus = $mysqli->query($queryUpdateOriginServer);
 			if (!$queryUpdateOriginServerStatus)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
 		}
-		$bingApi->reset();
 	}
 
 	mysqli_close($mysqli);
