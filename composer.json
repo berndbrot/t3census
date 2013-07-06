@@ -1,6 +1,7 @@
 {
 	"require": {
-		"jwage/purl": "0.0.2"
+		"jwage/purl": "0.0.2",
+		"themattharris/tmhOAuth": "0.8.1"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.21"
