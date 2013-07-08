@@ -22,7 +22,8 @@ server_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 server_ip INT UNSIGNED NOT NULL,
 created DATETIME NOT NULL,
 updated DATETIME,
-PRIMARY KEY (server_id)
+PRIMARY KEY (server_id),
+UNIQUE KEY unique_server_ip (server_ip)
 ) ENGINE=InnoDB;
 
 
