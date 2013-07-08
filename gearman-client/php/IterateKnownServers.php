@@ -1,4 +1,13 @@
 <?php
+/**
+ * Created by JetBrains PhpStorm.
+ * User: marcus
+ * Date: 27.06.13
+ * Time: 00:20
+ * To change this template use File | Settings | File Templates.
+ */
+
+ini_set('default_socket_timeout', 10);
 
 $dir = dirname(__FILE__);
 $libraryDir = realpath($dir . '/../../library/php');
@@ -7,7 +16,7 @@ $vendorDir = realpath($dir . '/../../vendor');
 require_once $vendorDir . '/autoload.php';
 
 
-$gearmanHost = '127.0.0.1';
+$gearmanHost = '46.252.26.103';
 $gearmanStatus = getGearmanServerStatus($gearmanHost);
 
 # available
@@ -25,8 +34,9 @@ if (is_array($gearmanStatus)) {
 			.' WHERE s.updated IS NULL AND h.typo3_installed=1'
 			.' GROUP BY s.server_id'
 			.' HAVING typo3hosts >= 1'
-			.' ORDER BY typo3hosts ASC LIMIT 100;';
-    $query = 'SELECT s.server_id,INET_NTOA(s.server_ip) AS server_ip FROM server s WHERE s.updated IS NULL LIMIT 1;';
+			.' ORDER BY typo3hosts ASC LIMIT 30;';
+	$query = 'SELECT s.server_id,INET_NTOA(s.server_ip) AS server_ip FROM server s WHERE s.updated IS NULL LIMIT 1;';
+
 	if ($res = $mysqli->query($query)) {
 
 		$date = new DateTime();
