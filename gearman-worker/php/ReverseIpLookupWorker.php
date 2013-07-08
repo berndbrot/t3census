@@ -31,6 +31,7 @@ class ReverseIpLookupWorker {
 		$ip = $job->workload();
 
 		$bingApi = new BingApi();
+		$bingApi->setMaxResults(1000);
 		$bingApi->setAccountKey($this->accountKey)->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
 
 		$results = $bingApi->setQuery('ip:' . $ip)->getResults();
