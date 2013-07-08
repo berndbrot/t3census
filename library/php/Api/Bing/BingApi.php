@@ -14,6 +14,8 @@ class BingApi {
 
 	protected $isProcessed = FALSE;
 
+	protected $maxResults = NULL;
+
 	protected $results = array();
 
 
@@ -85,6 +87,24 @@ class BingApi {
 	}
 
 	/**
+	 * @return null
+	 */
+	public function getMaxResults() {
+		return $this->maxResults;
+	}
+
+	/**
+	 * @param null $maxResults
+	 */
+	public function setMaxResults($maxResults) {
+		if (is_null($maxResults) || is_int($maxResults)) {
+			$this->maxResults = $maxResults;
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param null $query
 	 */
 	public function setQuery($query) {
@@ -119,21 +139,20 @@ class BingApi {
 			$requestUri = $this->endpoint . '/Web?$format=' . $this->format . '&Query=' . $query . '&$skip=' . strval($offset);
 
 			$urls = array();
-			for($i=0; $i< 1; $i++) {
+			for($i=0; $i< 2500; $i++) {
 				$context = stream_context_create($data);
 				$response = file_get_contents($requestUri, 0, $context);
 
 				$jsonObj = json_decode($response);
 				$urls = array_merge($urls, $this->extractUrlsFrom($jsonObj));
 
+				$offset += 50;
 				if (!property_exists($jsonObj->d, '__next') || !is_string($jsonObj->d->__next) || empty($jsonObj->d->__next)) {
 					break;
-				} else {
-					#echo(PHP_EOL);
-					#var_dump($jsonObj->d->__next);
+				} elseif (!is_null($this->maxResults) && is_int($this->maxResults) && $offset > $this->maxResults) {
+					break;
 				}
 
-				$offset += 50;
 				$requestUri = $this->endpoint . '/Web?$format=' . $this->format . '&Query=' . $query . '&$skip=' . strval($offset);
 			}
 			natsort($urls);
