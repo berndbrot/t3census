@@ -1,0 +1,12 @@
+# Domain-Whois #
+https://mebsd.com/coding-snipits/broadcast-from-network-cidr-equation-examples.html
+http://databaseblog.myname.nl/2011/07/working-with-ips-in-mysql-and-mariadb.html
+http://www.finnie.org/2007/12/05/mysql-and-cidr-selection/
+http://de.wikipedia.org/wiki/Classless_Inter-Domain_Routing
+http://www.jonasjohn.de/snippets/php/whois-query.htm
+https://github.com/regru/php-whois/blob/master/whois.class.php
+https://github.com/SimpleUpdates/phpwhois
+http://www.phpeasycode.com/showdemo.php?target=/whois/whois.php
+http://www.phpeasycode.com/whois/
+http://domainapi.com/documentation/how-to-use-domainapi/servuces-provided/domain-whois-api.html
+http://www.phpwhois.org/
