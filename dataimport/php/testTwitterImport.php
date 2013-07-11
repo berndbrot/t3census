@@ -8,8 +8,8 @@ require_once $vendorDir . '/autoload.php';
 $tmhOAuth = new tmhOAuth(array(
 	'consumer_key'    => 'W',
 	'consumer_secret' => 'X',
-	'user_token'      => 'Y',
-	'user_secret'     => 'Z',
+	'user'            => 'Y',
+	'user'            => 'Z',
 ));
 
 
