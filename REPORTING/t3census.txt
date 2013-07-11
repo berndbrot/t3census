@@ -1,38 +1,38 @@
 mysql> SELECT count(host_id),typo3_versionstring FROM host WHERE typo3_installed = 1 GROUP BY typo3_versionstring;
-+----------------+---------------------+
-| count(host_id) | typo3_versionstring |
-+----------------+---------------------+
-|            549 | NULL                |
-|              5 | TYPO3 3.6 CMS       |
-|             18 | TYPO3 3.7 CMS       |
-|             62 | TYPO3 3.8 CMS       |
-|            110 | TYPO3 4.0 CMS       |
-|            332 | TYPO3 4.1 CMS       |
-|            849 | TYPO3 4.2 CMS       |
-|            460 | TYPO3 4.3 CMS       |
-|            796 | TYPO3 4.4 CMS       |
-|           5125 | TYPO3 4.5 CMS       |
-|            587 | TYPO3 4.6 CMS       |
-|           1330 | TYPO3 4.7 CMS       |
-|            183 | TYPO3 6.0 CMS       |
-|             54 | TYPO3 6.1 CMS       |
-+----------------+---------------------+
-14 rows in set (0.26 sec)
++----------------+------------------------------------------------------------------+
+| count(host_id) | typo3_versionstring                                              |
++----------------+------------------------------------------------------------------+
+|           1174 | NULL                                                             |
+|             15 | TYPO3 3.6 CMS                                                    |
+|             62 | TYPO3 3.7 CMS                                                    |
+|            213 | TYPO3 3.8 CMS                                                    |
+|            321 | TYPO3 4.0 CMS                                                    |
+|           1069 | TYPO3 4.1 CMS                                                    |
+|           2553 | TYPO3 4.2 CMS                                                    |
+|           1231 | TYPO3 4.3 CMS                                                    |
+|           2137 | TYPO3 4.4 CMS                                                    |
+|          11869 | TYPO3 4.5 CMS                                                    |
+|           1179 | TYPO3 4.6 CMS                                                    |
+|           2357 | TYPO3 4.7 CMS                                                    |
+|            299 | TYPO3 6.0 CMS                                                    |
+|            109 | TYPO3 6.1 CMS                                                    |
++----------------+------------------------------------------------------------------+
+14 rows in set (0.21 sec)
 
 
 mysql> SELECT COUNT(host_id) FROM host WHERE typo3_installed;
 +----------------+
 | COUNT(host_id) |
 +----------------+
-|          10460 |
+|          24746 |
 +----------------+
-1 row in set (0.13 sec)
+1 row in set (0.05 sec)
 
 
 mysql> SELECT COUNT(DISTINCT host_domain) FROM host WHERE typo3_installed;
 +-----------------------------+
 | COUNT(DISTINCT host_domain) |
 +-----------------------------+
-|                       10219 |
+|                       24479 |
 +-----------------------------+
-1 row in set (0.19 sec)
+1 row in set (0.20 sec)
