@@ -1,5 +1,9 @@
 <?php
-require_once 'library/tmhOAuth/tmhOAuth.php';
+$dir = dirname(__FILE__);
+$vendorDir = realpath($dir . '/../../vendor');
+
+require_once $vendorDir . '/autoload.php';
+
 
 $tmhOAuth = new tmhOAuth(array(
 	'consumer_key'    => 'W',
@@ -51,7 +55,8 @@ if ($code == 200) {
 		}
 	}
 } else {
-	tmhUtilities::pr(htmlentities($tmhOAuth->response['response']));
+	#tmhUtilities::pr(htmlentities($tmhOAuth->response['response']));
+	var_dump($tmhOAuth->response['response']);
 }
 
 mysqli_close($mysqli);

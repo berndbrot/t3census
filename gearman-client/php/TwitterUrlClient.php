@@ -1,5 +1,6 @@
 <?php
-require_once '../../gearman-worker/php/UrlNormalizer.php';
+$dir = dirname(__FILE__);
+require_once $dir . '/../../gearman-worker/php/UrlNormalizer.php';
 
 
 /**

@@ -1,5 +1,8 @@
 <?php
-require_once 'library/tmhOAuth/tmhOAuth.php';
+$dir = dirname(__FILE__);
+$vendorDir = realpath($dir . '/../../vendor');
+
+require_once $vendorDir . '/autoload.php';
 
 $tmhOAuth = new tmhOAuth(array(
 	'consumer_key'    => 'V',
