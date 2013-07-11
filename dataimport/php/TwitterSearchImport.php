@@ -24,19 +24,14 @@ $mysqli = new mysqli("127.0.0.1", "t3census_dbu", "t3census", "t3census_db", 330
 if ($code == 200) {
 	$tweets = json_decode($tmhOAuth->response['response']);
 	$tweets = $tweets->statuses;
-#var_dump(get_object_vars($tweets));
-
-#var_dump($tweets);
 
 	foreach ($tweets as $rawTweet) {
-#var_dump(get_object_vars($rawTweet));
 		if (!is_array($rawTweet->entities->urls) || count($rawTweet->entities->urls) == 0)  continue;
 
 		$twitterUser = array();
 		$twitterUser['id'] = $rawTweet->user->id;
 		$twitterUser['name'] = $rawTweet->user->screen_name;
 		$twitterUserId = getTwitterUserId($mysqli, $twitterUser);
-#var_dump($twitterUser);
 
 		$tweet = array();
 		$tweet['id'] = $rawTweet->id;
@@ -63,7 +58,8 @@ var_dump($tweet);
 			}
 	}
 } else {
-	tmhUtilities::pr(htmlentities($tmhOAuth->response['response']));
+	#tmhUtilities::pr(htmlentities($tmhOAuth->response['response']));
+    var_dump($tmhOAuth->response['response']);
 }
 
 mysqli_close($mysqli);
