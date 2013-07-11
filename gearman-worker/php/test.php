@@ -61,6 +61,7 @@ $url = 'http://www.danatranslation.com/index.php?option=com_content&view=article
 $url = 'http://de.wikipedia.org/wiki/Hilfe:VisualEditor';
 $url = 'http://mp3stream1.apasf.apa.at:8000/';
 $url = 'http://jira.phoenix.typo3.org:8080/browse/PHX-57?focusedCommentId=10028&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-10028';
+$url = 'http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNEBCDPYeEjGH_PcVC6aV9YNjcHXOA&url=http://t3n.de/news/bundesamt-bsi-uberpruft-475684/';
 
 XML prolog - generator in DOM not working:
 $url= 'http://kamerakind.net';
