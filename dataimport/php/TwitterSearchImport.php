@@ -15,7 +15,8 @@ $tmhOAuth = new tmhOAuth(array(
 $code = $tmhOAuth->request('GET', $tmhOAuth->url('1.1/search/tweets.json'), array(
 	'count' => 180,
 	'q' => 'TYPO3',
-	'since' => '339421244401254400',
+	'since_id' => '34146550963778355',
+    'max_id' => '355071887925190657'
 ));
 
 $mysqli = new mysqli("127.0.0.1", "t3census_dbu", "t3census", "t3census_db", 3306);
