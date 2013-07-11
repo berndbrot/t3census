@@ -13,11 +13,12 @@ $tmhOAuth = new tmhOAuth(array(
 ));
 
 
-$code = $tmhOAuth->request('GET', $tmhOAuth->url('1.1/statuses/user_timeline.json'), array(
-	'screen_name' => 'cmscrawler',
-	'count' => 150,
-	'exclude_replies' => 1,
-	'since_id' => '335323227851206656',
+$code = $tmhOAuth->request('GET', $tmhOAuth->url('/1.1/statuses/user_timeline.json'), array(
+	'screen_name' => 'jweilandnet',
+	'count' => 180,
+	'exclude_replies' => 0,
+	'since_id' => '337731909809471489',
+	#'max_id' => '343223412560363520',
 ));
 
 $mysqli = new mysqli("127.0.0.1", "X", "Y", "Z", 3306);
