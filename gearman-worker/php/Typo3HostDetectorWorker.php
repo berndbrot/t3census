@@ -13,7 +13,6 @@ class Typo3HostDetectorWorker {
 	private $port;
 	private $gearmanWorker;
 	private $urlFetcher;
-	private $urlNormalizer;
 
 	private $userAgent = 'T3census-Crawler/1.0';
 
@@ -42,13 +41,17 @@ class Typo3HostDetectorWorker {
 
 			$result = array();
 
-			$urlInfo = $this->getUrlNormalizer()->setOriginUrl($url)->getNormalizedUrl();
+			$objUrl = \Purl\Url::parse($url);
 
 			$result['ip'] = $fetcher->getIpAddress();
 			$result['port'] = $fetcher->getPort();
-			$result['protocol'] = $urlInfo['protocol'];
-			$result['host'] = $urlInfo['host'];
-			$result['path'] = $urlInfo['path'];
+			$result['scheme'] = $objUrl->get('scheme');
+			$result['protocol'] = $objUrl->get('scheme') . '://';
+			$result['host'] = $objUrl->get('host');
+			$result['subdomain'] = $objUrl->get('subdomain');
+			$result['registerableDomain'] = $objUrl->get('registerableDomain');
+			$result['publicSuffix'] = $objUrl->get('publicSuffix');
+			$result['path'] = $objUrl->get('path')->getPath();
 
 			$content = $fetcher->getBody();
 			if (is_string($content) && strlen($content)) {
@@ -73,7 +76,7 @@ class Typo3HostDetectorWorker {
 					$result['TYPO3'] = TRUE;
 					$result['TYPO3version'] = FALSE;
 				} else {
-					$hostname = $urlInfo['protocol'] . $urlInfo['host'] . $urlInfo['port'] . '/';
+					$hostname = $objUrl->get('scheme') . '://' . $objUrl->get('host') . (!is_null($objUrl->get('port') ? $objUrl->get('port') : '')) . '/';
 
 					$fetcherHttpCodeFileadmin = $fetcherHttpCodeUploads = NULL;
 					$fetcherErrnoFileadmin = $fetcherErrnoUploads = 0;
@@ -91,7 +94,7 @@ class Typo3HostDetectorWorker {
 						$result['TYPO3'] = TRUE;
 						$result['TYPO3version'] = FALSE;
 					} else {
-						$hostname .= $urlInfo['path'];
+						$hostname .= $objUrl->get('path')->getPath();
 
 						$fetcherHttpCodeFileadmin = $fetcherHttpCodeUploads = NULL;
 						$fetcherErrnoFileadmin = $fetcherErrnoUploads = 0;
@@ -117,7 +120,7 @@ class Typo3HostDetectorWorker {
 				}
 			}
 
-			unset($urlInfo);
+			unset($objUrl);
 		}
 
 		return json_encode($result);
@@ -145,14 +148,6 @@ class Typo3HostDetectorWorker {
 
 		libxml_clear_errors();
 		return $metaGenerator;
-	}
-
-	protected function getUrlNormalizer() {
-		if (!is_object($this->urlNormalizer) && !($this->urlNormalizer instanceof UrlNormalizer)) {
-			$this->urlNormalizer = new UrlNormalizer();
-		}
-
-		return $this->urlNormalizer;
 	}
 
 	protected function getUrlFetcher() {

@@ -34,35 +34,6 @@ function parseDomForGenerator($content) {
 }
 
 /*
-$url = 'http://typo3.org/support/professional-services/reference/Agency/show//nawinfo-gmbh/';
-$url = 'http://typo3.org//news/article/extbase-and-fluid-feature-overview/';
-$url = 'http://web.archive.org/web/20110724075246/http://www.mediamarkt.ch/';
-$url = 'http://www.slideshare.net/mayflowergmbh/html5-und-nodejs-grundlagen?ref=http://it-republik.de/php/news/Slideshow-zu-HTML5-und-Node.js-062186.html';
-$url = 'http://bacolicio.us/http://typo3.org/';
-$url = 'http://git.typo3.org/TYPO3v4/Core.git/history/HEAD:/t3lib/jsfunc.evalfield.js';
-$url = 'http://pyfound.blogspot.de/2013/02/python-trademark-at-risk-in-europe-we.html?utm_source=feedburner&utm_medium=twitter&utm_campaign=Feed:+PythonSoftwareFoundationNews+%28Python+Software+Foundation+News%29';
-$url = 'http://www.icondeposit.com/design:116';
-$url = 'http://hsmaker.com/harlemshake.asp?url=http://www.network-publishing.de';
-$url = 'http://www.cultofmac.com/apple-may-be-invisibly-filtering-your-outgoing-mobileme-email-exclusive/103703?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed:+cultofmac/bFow+%28Cult+of+Mac%29';
-$url = 'http://webcache.googleusercontent.com/search?q=cache:Ph3kNuO48m0J:https://www.gema.de/impressum.html+gema.de/impressum&cd=1&hl=de&ct=clnk&gl=de&client=firefox-a&source=www.google.de';
-$url = 'http://www.gamona.de/videos/gamescom-2011,gamona-pwned-rtl-hq:video,1978237.html';
-$url = 'http://it.wikipedia.org/wiki/Wikipedia:Comunicato_4_ottobre_2011/en';
-$url = 'http://www.youtube.com/api/moderator/g/yt/?channame=bundesregierung&hl=de&embed=http://www.youtube.com/bundesregierung#8/e=be767';
-$url = 'http://www.ftd.de/it-medien/it-telekommunikation/:einigung-auf-neuen-standard-nokia-zieht-im-sim-streit-die-patentkarte/70015786.html#link_position=300_26&utm_source=newsletter&utm_medium=unternehmen_persoenlich_text&utm_campaign=%campaign';
-$url = 'https://metrics.typo3.org/drilldown/violations/org.typo3:extension-direct_mail';
-$url = 'http://www.google.com/finance?client=ob&q=NASDAQ:FB';
-$url = 'http://wiki.typo3.org/User_talk:Alex_schnitzler';
-$url = 'http://tools.pingdom.com/fpt/tZQWuMvtd/http://www.redroot.de';
-$url = 'http://git.typo3.org/Documentation/TYPO3/Book/ExtbaseFluid.git/tree/HEAD:/Documentation';
-$url = 'http://hsmaker.com/harlemshake.asp?url=http://www.rogo.it';
-$url = 'http://m.techcrunch.com/2013/02/26/zuck-bill-gates-jack-dorsey-code-org-film/?icid=tc_tp_fulltxt(2:4';
-$url = 'http://www.chictopia.com/photo/show/813887-What+to+Wear+to+Scare+Off+Creeps-black-chunky-boots-black-furry-coat:-';
-$url = 'http://www.danatranslation.com/index.php?option=com_content&view=article&id=167:time-management&catid=29:blog-posts&Itemid=222';
-$url = 'http://de.wikipedia.org/wiki/Hilfe:VisualEditor';
-$url = 'http://mp3stream1.apasf.apa.at:8000/';
-$url = 'http://jira.phoenix.typo3.org:8080/browse/PHX-57?focusedCommentId=10028&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-10028';
-$url = 'http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNEBCDPYeEjGH_PcVC6aV9YNjcHXOA&url=http://t3n.de/news/bundesamt-bsi-uberpruft-475684/';
-
 XML prolog - generator in DOM not working:
 $url= 'http://kamerakind.net';
 $url = 'http://t3uni.typo3-fr.org';
