@@ -1,11 +1,5 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: marcus
- * Date: 21.06.13
- * Time: 19:57
- * To change this template use File | Settings | File Templates.
- */
+
 
 class UrlNormalizer {
 

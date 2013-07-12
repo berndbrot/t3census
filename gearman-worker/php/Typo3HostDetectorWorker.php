@@ -1,14 +1,12 @@
 <?php
-require_once 'UrlFetcher.php';
-require_once 'UrlNormalizer.php';
+$dir = dirname(__FILE__);
+$libraryDir = realpath($dir . '/../../library/php');
+$vendorDir = realpath($dir . '/../../vendor');
 
-/**
- * Created by JetBrains PhpStorm.
- * User: marcus
- * Date: 25.05.13
- * Time: 21:11
- * To change this template use File | Settings | File Templates.
- */
+require_once $libraryDir . '/Url/UrlFetcher.php';
+require_once $vendorDir . '/autoload.php';
+
+
 class Typo3HostDetectorWorker {
 
 	private $host;

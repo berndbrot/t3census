@@ -1,11 +1,11 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: marcus
- * Date: 26.05.13
- * Time: 16:11
- * To change this template use File | Settings | File Templates.
- */
+$dir = dirname(__FILE__);
+$libraryDir = realpath($dir . '/../../library/php');
+$vendorDir = realpath($dir . '/../../vendor');
+
+require_once $libraryDir . '/Url/UrlFetcher.php';
+require_once $libraryDir . '/Url/UrlNormalizer.php';
+require_once $vendorDir . '/autoload.php';
 
 
 function parseDomForGenerator($content) {
@@ -84,14 +84,28 @@ if ($curlErrno === 0
 $urlInfo = normalizeUrl($url);
 */
 
-/*
-require_once 'UrlNormalizer.php';
-$normalizer = new UrlNormalizer();
-$arrUrl = $normalizer->setOriginUrl('http://www.example.org/path')->getNormalizedUrl();
-print_r($arrUrl);
-*/
 
-require_once 'UrlFetcher.php';
+$url = 'http://www.danatranslation.com/index.php?option=com_content&view=article&id=167:time-management&catid=29:blog-posts&Itemid=222';
+$normalizer = new UrlNormalizer();
+$arrUrl = $normalizer->setOriginUrl($url)->getNormalizedUrl();
+#print_r($arrUrl);
+
+$objUrl = \Purl\Url::parse($url);
+$result = array();
+#$result['ip'] = $fetcher->getIpAddress();
+#$result['port'] = $fetcher->getPort();
+$result['scheme'] = $objUrl->get('scheme');
+$result['protocol'] = $objUrl->get('scheme') . '://';
+$result['host'] = $objUrl->get('host');
+$result['subdomain'] = $objUrl->get('subdomain');
+$result['registerableDomain'] = $objUrl->get('registerableDomain');
+$result['publicSuffix'] = $objUrl->get('publicSuffix');
+$result['path'] = $objUrl->get('path')->getPath();
+print_r($result);
+
+
+
+
 $fetcher = new UrlFetcher();
 $fetcher->setUrl('http://www.example.org/path');
 $fetcher->fetchUrl(UrlFetcher::HTTP_GET, TRUE);
