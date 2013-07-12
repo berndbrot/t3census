@@ -87,24 +87,29 @@ class UrlFetcher {
 		}
 
 		$curlInfo = curl_getinfo($curl);
-#var_dump($curlInfo);
 
 		if (array_key_exists('primary_ip', $curlInfo) && array_key_exists('primary_port', $curlInfo)) {
 			$this->ipAddress = $curlInfo['primary_ip'];
 			$this->port = $curlInfo['primary_port'];
 		} else {
 			$arrUrl = parse_url($this->url);
+
 			$ip = gethostbyname($arrUrl['host']);
 
 			$this->ipAddress = ($ip !== $arrUrl['host'] ? $ip : NULL);
 
-			if ($arrUrl['scheme'] === 'http') {
-				$this->port = 80;
-			} elseif ($arrUrl['scheme'] === 'https') {
-				$this->port = 443;
+			if (!array_key_exists('port', $arrUrl)) {
+				if ($arrUrl['scheme'] === 'http') {
+					$this->port = 80;
+				} elseif ($arrUrl['scheme'] === 'https') {
+					$this->port = 443;
+				} else {
+					$result['port'] = NULL;
+				}
 			} else {
-				$result['port'] = NULL;
+				$this->port = $arrUrl['port'];
 			}
+
 		}
 
 		if (is_array($curlInfo) && array_key_exists('http_code', $curlInfo)) {
