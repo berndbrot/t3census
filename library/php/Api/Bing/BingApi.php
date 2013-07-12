@@ -207,7 +207,7 @@ class BingApi {
 
 		$simplifiedUrl .= $url->get('scheme') . '://';
 		$simplifiedUrl .= $url->get('host');
-		$simplifiedUrl .= (!is_null($url->get('port')) ? $url->get('port') : '');
+		$simplifiedUrl .= (!is_null($url->get('port')) ? ':' . $url->get('port') .'/' : '/');
 
 		return $simplifiedUrl;
 	}
