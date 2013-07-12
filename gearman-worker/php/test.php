@@ -78,6 +78,7 @@ print_r($result);
 
 
 $fetcher = new UrlFetcher();
-$fetcher->setUrl('http://www.example.org/path');
+$fetcher->setUrl('http://ribkat.mkgp.gov.si:8080/');
 $fetcher->fetchUrl(UrlFetcher::HTTP_GET, TRUE);
+print_r($fetcher->getPort());
 ?>
