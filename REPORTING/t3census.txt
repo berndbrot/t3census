@@ -1,38 +1,262 @@
 mysql> SELECT count(host_id),typo3_versionstring FROM host WHERE typo3_installed = 1 GROUP BY typo3_versionstring;
-+----------------+------------------------------------------------------------------+
-| count(host_id) | typo3_versionstring                                              |
-+----------------+------------------------------------------------------------------+
-|           1174 | NULL                                                             |
-|             15 | TYPO3 3.6 CMS                                                    |
-|             62 | TYPO3 3.7 CMS                                                    |
-|            213 | TYPO3 3.8 CMS                                                    |
-|            321 | TYPO3 4.0 CMS                                                    |
-|           1069 | TYPO3 4.1 CMS                                                    |
-|           2553 | TYPO3 4.2 CMS                                                    |
-|           1231 | TYPO3 4.3 CMS                                                    |
-|           2137 | TYPO3 4.4 CMS                                                    |
-|          11869 | TYPO3 4.5 CMS                                                    |
-|           1179 | TYPO3 4.6 CMS                                                    |
-|           2357 | TYPO3 4.7 CMS                                                    |
-|            299 | TYPO3 6.0 CMS                                                    |
-|            109 | TYPO3 6.1 CMS                                                    |
-+----------------+------------------------------------------------------------------+
-14 rows in set (0.21 sec)
++----------------+------------------------------------------------------------------------+
+| count(host_id) | typo3_versionstring                                                    |
++----------------+------------------------------------------------------------------------+
+|           1386 | NULL                                                                   |
+|             20 | TYPO3 3.6 CMS                                                          |
+|             84 | TYPO3 3.7 CMS                                                          |
+|            258 | TYPO3 3.8 CMS                                                          |
+|            403 | TYPO3 4.0 CMS                                                          |
+|           1302 | TYPO3 4.1 CMS                                                          |
+|           3056 | TYPO3 4.2 CMS                                                          |
+|           1417 | TYPO3 4.3 CMS                                                          |
+|           2429 | TYPO3 4.4 CMS                                                          |
+|          14337 | TYPO3 4.5 CMS                                                          |
+|           1426 | TYPO3 4.6 CMS                                                          |
+|           2752 | TYPO3 4.7 CMS                                                          |
+|            372 | TYPO3 6.0 CMS                                                          |
+|            126 | TYPO3 6.1 CMS                                                          |
++----------------+------------------------------------------------------------------------+
+14 rows in set (0.30 sec)
 
 
 mysql> SELECT COUNT(host_id) FROM host WHERE typo3_installed;
 +----------------+
 | COUNT(host_id) |
 +----------------+
-|          24746 |
+|          29535 |
 +----------------+
-1 row in set (0.05 sec)
+1 row in set (0.16 sec)
+
+
+
+mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_suffix ORDER BY num_hosts DESC;
++----------------+-----------+
+| publicSuffix   | num_hosts |
++----------------+-----------+
+| de             |     13484 |
+| com            |      4527 |
+| ch             |      1831 |
+| at             |      1592 |
+| org            |      1197 |
+| dk             |       921 |
+| net            |       654 |
+| eu             |       575 |
+| info           |       557 |
+| fr             |       497 |
+| nl             |       475 |
+| ac.at          |       400 |
+| it             |       298 |
+| be             |       204 |
+| si             |       204 |
+| ca             |       183 |
+| com.au         |       152 |
+| se             |       107 |
+| co.uk          |        98 |
+| biz            |        90 |
+| ie             |        78 |
+| edu.tr         |        77 |
+| cz             |        74 |
+| pl             |        72 |
+| co.nz          |        67 |
+| fi             |        62 |
+| es             |        60 |
+| cc             |        50 |
+| sk             |        37 |
+| ru             |        36 |
+| co.at          |        35 |
+| edu            |        35 |
+| no             |        28 |
+| org.au         |        28 |
+| hu             |        27 |
+| ac.fj          |        27 |
+| org.uk         |        26 |
+| cn             |        22 |
+| org.nz         |        21 |
+| lu             |        19 |
+| tv             |        18 |
+| ag             |        17 |
+| ee             |        17 |
+| us             |        17 |
+| www.ro         |        16 |
+| qc.ca          |        16 |
+| gv.at          |        14 |
+| gov.rw         |        14 |
+| com.tr         |        12 |
+| de.com         |        12 |
+| mobi           |        12 |
+| in             |        11 |
+| net.au         |        11 |
+| lt             |        11 |
+| asia           |        11 |
+| dz             |        11 |
+| gr             |        11 |
+| com.na         |        10 |
+| ac.uk          |        10 |
+| co.za          |        10 |
+| nu             |        10 |
+| lv             |         9 |
+| pt             |         9 |
+| uk.com         |         9 |
+| am             |         9 |
+| or.at          |         8 |
+| hr             |         8 |
+| li             |         8 |
+| bg             |         8 |
+| com.pl         |         8 |
+| com.br         |         7 |
+| com.cn         |         7 |
+| ae             |         6 |
+| us.com         |         6 |
+| br.com         |         6 |
+| com.de         |         5 |
+| cn.com         |         5 |
+| ru.com         |         5 |
+| jp             |         5 |
+| by             |         5 |
+| com.ph         |         4 |
+| co.kr          |         4 |
+| gov.pl         |         4 |
+| sk.ca          |         4 |
+| co.jp          |         4 |
+| sg             |         4 |
+| co             |         4 |
+| gr.com         |         3 |
+| gouv.fr        |         3 |
+| com.sg         |         3 |
+| go.th          |         3 |
+| kr             |         3 |
+| rw             |         3 |
+| eu.com         |         3 |
+| za.com         |         3 |
+| mx             |         3 |
+| cl             |         3 |
+| ws             |         3 |
+| pro            |         3 |
+| ro             |         3 |
+| com.ua         |         3 |
+| to             |         3 |
+| int            |         3 |
+| com.ar         |         3 |
+| bc.ca          |         3 |
+| edu.pl         |         3 |
+| hu.com         |         3 |
+| org.co         |         3 |
+| gov.af         |         2 |
+| ba             |         2 |
+| my             |         2 |
+| co.id          |         2 |
+| travel         |         2 |
+| ac.in          |         2 |
+| asn.au         |         2 |
+| se.com         |         2 |
+| com.ru         |         2 |
+| gl             |         2 |
+| firenze.it     |         2 |
+| is             |         2 |
+| ra.it          |         2 |
+| kr.com         |         2 |
+| info.tr        |         2 |
+| gov            |         2 |
+| md             |         2 |
+| org.na         |         2 |
+| prd.fr         |         2 |
+| tn.it          |         2 |
+| net.fj         |         1 |
+| ug             |         1 |
+| presse.fr      |         1 |
+| com.ec         |         1 |
+| org.fj         |         1 |
+| uz             |         1 |
+| ac             |         1 |
+| com.fj         |         1 |
+| hk             |         1 |
+| ae.org         |         1 |
+| us.org         |         1 |
+| za.org         |         1 |
+| com.bd         |         1 |
+| coop           |         1 |
+| rs             |         1 |
+| com.pe         |         1 |
+| se.net         |         1 |
+| com.uy         |         1 |
+| vn             |         1 |
+| fo             |         1 |
+| com.my         |         1 |
+| com.ve         |         1 |
+| ar.com         |         1 |
+| pe             |         1 |
+| name           |         1 |
+| school.nz      |         1 |
+| tw             |         1 |
+| tt             |         1 |
+| k12.ny.us      |         1 |
+| co.rs          |         1 |
+| com.hk         |         1 |
+| st             |         1 |
+| com.dz         |         1 |
+| alessandria.it |         1 |
+| benevento.it   |         1 |
+| bergamo.it     |         1 |
+| genova.it      |         1 |
+| grosseto.it    |         1 |
+| salerno.it     |         1 |
+| varese.it      |         1 |
+| viterbo.it     |         1 |
+| vu             |         1 |
+| nhs.uk         |         1 |
+| co.in          |         1 |
+| museum         |         1 |
+| co.ke          |         1 |
+| bf             |         1 |
+| wa.gov.au      |         1 |
+| ac.za          |         1 |
+| com.kh         |         1 |
+| kz             |         1 |
+| co.hu          |         1 |
+| fm             |         1 |
+| aero           |         1 |
+| ua             |         1 |
+| hn             |         1 |
+| org.eg         |         1 |
+| org.za         |         1 |
+| com.mx         |         1 |
+| pn.it          |         1 |
+| vg             |         1 |
+| net.nz         |         1 |
+| gb.com         |         1 |
+| sa.com         |         1 |
+| ud.it          |         1 |
+| govt.nz        |         1 |
+| me             |         1 |
+| co.ug          |         1 |
++----------------+-----------+
+199 rows in set (0.53 sec)
 
 
 mysql> SELECT COUNT(DISTINCT host_domain) FROM host WHERE typo3_installed;
 +-----------------------------+
 | COUNT(DISTINCT host_domain) |
 +-----------------------------+
-|                       24479 |
+|                       22824 |
 +-----------------------------+
-1 row in set (0.20 sec)
+1 row in set (0.29 sec)
+
+
+mysql> SELECT host_domain,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_domain HAVING num_hosts > 100 ORDER BY num_hosts DESC;
++------------------+-----------+
+| host_domain      | num_hosts |
++------------------+-----------+
+| univie.ac.at     |       347 |
+| tum.de           |       225 |
+| tu-berlin.de     |       202 |
+| typo3server.info |       200 |
+| uni-wuppertal.de |       148 |
+| charite.de       |       146 |
+| apotheke.ch      |       119 |
+| au.dk            |       111 |
+| uni-koeln.de     |       109 |
+| uni-hannover.de  |       101 |
+| drs.de           |       101 |
++------------------+-----------+
+11 rows in set (0.46 sec)
