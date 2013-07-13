@@ -43,11 +43,11 @@ CREATE TABLE cidr (
 
 CREATE TABLE host (
 	host_id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	host_scheme         VARCHAR(255)    NULL,
-	host_subdomain      VARCHAR(255)    NULL,
-	host_domain         VARCHAR(255)    NULL,
-	host_suffix         VARCHAR(255)    NULL,
-	host_name           VARCHAR(255)    NOT NULL,
+	host_scheme         VARCHAR(10)     NULL,
+	host_subdomain      VARCHAR(128)    NULL,
+	host_domain         VARCHAR(255)    NOT NULL,
+	host_suffix         VARCHAR(64)     NULL,
+	host_name           VARCHAR(255)    NULL,
 	host_path           VARCHAR(255)    NULL,
 	typo3_installed     BOOL            NULL,
 	typo3_versionstring VARCHAR(64)     NULL,
