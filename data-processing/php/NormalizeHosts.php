@@ -12,7 +12,7 @@ if ($mysqli->connect_errno) {
 }
 
 $isSuccessful = TRUE;
-$selectQuery = 'SELECT host_id,host_name,host_domain FROM host WHERE typo3_installed=1 AND (host_scheme IS NULL OR host_domain IS NULL OR host_suffix IS NULL);';
+$selectQuery = 'SELECT host_id,host_name,host_domain FROM host WHERE typo3_installed=1 AND (host_scheme IS NULL OR host_domain IS NULL);';
 $res = $mysqli->query($selectQuery);
 printf('DEBUG: Query: %s:' . PHP_EOL, $selectQuery);
 
