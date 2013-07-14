@@ -1,4 +1,6 @@
 <?php
+namespace T3census\Url;
+
 
 class UrlFetcher {
 
@@ -26,7 +28,17 @@ class UrlFetcher {
 		$this->reset();
 	}
 
-	public function fetchUrl($httpType, $retrieveCookies = FALSE) {
+	public function fetchUrl($httpType, $retrieveCookies = FALSE, $followRedirects = TRUE) {
+		if (!is_bool($retrieveCookies)) {
+			throw new InvalidArgumentException(
+				sprintf('Invalid argument for method %s:%s()', get_class($this), 'fetchUrl'),
+				1373757860);
+		}
+		if (!is_bool($followRedirects)) {
+			throw new InvalidArgumentException(
+				sprintf('Invalid argument for method %s:%s()', get_class($this), 'fetchUrl'),
+				1373757863);
+		}
 		if (is_bool($retrieveCookies) && $retrieveCookies && $httpType === self::HTTP_HEAD) {
 			throw new RuntimeException('HEAD request along with cookie retrieval does not work', 1371845320);
 		}
@@ -35,7 +47,7 @@ class UrlFetcher {
 		curl_setopt($curl, CURLOPT_URL, $this->url);
 		curl_setopt($curl, CURLOPT_POST, FALSE);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, $followRedirects);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($curl, CURLOPT_USERAGENT, 'T3census-Crawler/1.0');
 
