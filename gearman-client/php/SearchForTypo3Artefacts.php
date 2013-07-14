@@ -3,7 +3,8 @@ $dir = dirname(__FILE__);
 $libraryDir = realpath($dir . '/../../library/php');
 $vendorDir = realpath($dir . '/../../vendor');
 
-require_once $libraryDir . '/Api/Bing/BingApi.php';
+require_once $libraryDir . '/Bing/Api/ReverseIpLookup.php';
+require_once $libraryDir . '/Bing/Scraper/ReverseIpLookup.php';
 require_once $vendorDir . '/autoload.php';
 
 
@@ -20,11 +21,20 @@ if (is_array($gearmanStatus)) {
 	// add the default server
 	$client->addServer($gearmanHost, 4730);
 
-	$bingApi = new BingApi();
-	$bingApi->setAccountKey('')->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
-
-	#$results = $bingApi->setQuery('fileadmin/user_upload')->setOffset(1500)->setMaxResults(2000)->getResults();
-	#$results = $bingApi->setQuery('showuid')->setOffset(1500)->setMaxResults(2000)->getResults();
+	$results = array();
+	try {
+		$objLookup = new T3census\Bing\Api\ReverseIpLookup();
+		$objLookup->setAccountKey('')->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
+		#$results = $bingApi->setQuery('fileadmin/user_upload')->setOffset(1500)->setMaxResults(2000)->getResults();
+		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(100)->getResults();
+		unset($objLookup);
+	} catch (\T3census\Bing\Api\Exception\ApiConsumeException $e) {
+		$objLookup = new \T3census\Bing\Scraper\ReverseIpLookup();
+		$objLookup->setEndpoint('http://www.bing.com/search');
+		#$results = $bingApi->setQuery('fileadmin/user_upload')->setOffset(1500)->setMaxResults(2000)->getResults();
+		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(1500)->getResults(2000);
+		unset($objLookup);
+	}
 
 	foreach($results as $url) {
 		$detectionResult = json_decode($client->do("TYPO3HostDetector", $url));
