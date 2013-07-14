@@ -25,8 +25,9 @@ if (is_array($gearmanStatus)) {
 			.' WHERE s.updated IS NULL AND h.typo3_installed=1'
 			.' GROUP BY s.server_id'
 			.' HAVING typo3hosts >= 1'
-			.' ORDER BY typo3hosts DESC LIMIT 30;';
-	#$query = 'SELECT s.server_id,INET_NTOA(s.server_ip) AS server_ip FROM server s WHERE s.updated IS NULL LIMIT 10;';
+			.' ORDER BY typo3hosts DESC LIMIT 3;';
+	$query = 'SELECT s.server_id,INET_NTOA(s.server_ip) AS server_ip FROM server s WHERE s.updated IS NULL LIMIT 30;';
+	#echo($query . PHP_EOL);
 
 	if ($res = $mysqli->query($query)) {
 
@@ -215,7 +216,7 @@ function persistHost($mysqli, $serverId, $host) {
 			$foo2 = $mysqli->query("UPDATE host SET "
 				. "typo3_installed=" . ($host->TYPO3 ? 1 : 0) . ","
 				. "typo3_versionstring=" . ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
-				. "host_path=" . "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
+				. "host_path=" . (is_string($host->path) && strlen($host->path) > 0 && 0 !== strcmp('/', $host->path) ? '\'' . mysqli_real_escape_string($mysqli, $host->path) . '\'' : 'NULL') . ','
 				. "created=" . "'" . $date->format('Y-m-d H:i:s') . "'"
 				. " WHERE created IS NULL AND host_id=" .$hostId);
 			if (!$foo2)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
