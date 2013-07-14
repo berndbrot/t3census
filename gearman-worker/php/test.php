@@ -38,33 +38,16 @@ XML prolog - generator in DOM not working:
 $url= 'http://kamerakind.net';
 $url = 'http://t3uni.typo3-fr.org';
 $url = 'http://www.typovision.de/de/home/';
-
-$curlInfo = array();
-$curlErrno = array();
-$content = '';
-
-resolveTargetUrl($url, $content, $curlInfo, $curlErrno);
-
-if ($curlErrno === 0
-		&& array_key_exists('redirect_count', $curlInfo) && $curlInfo['redirect_count'] >= 0
-		&& array_key_exists('url', $curlInfo) && !empty($curlInfo['url'])) {
-	$url = $curlInfo['url'];
-}
-
-
-$urlInfo = normalizeUrl($url);
 */
 
 
 $url = 'http://www.danatranslation.com/index.php?option=com_content&view=article&id=167:time-management&catid=29:blog-posts&Itemid=222';
-$normalizer = new UrlNormalizer();
-$arrUrl = $normalizer->setOriginUrl($url)->getNormalizedUrl();
-#print_r($arrUrl);
 
+$fetcher = new \T3census\Url\UrlFetcher();
 $objUrl = \Purl\Url::parse($url);
 $result = array();
-#$result['ip'] = $fetcher->getIpAddress();
-#$result['port'] = $fetcher->getPort();
+$result['ip'] = $fetcher->getIpAddress();
+$result['port'] = $fetcher->getPort();
 $result['scheme'] = $objUrl->get('scheme');
 $result['protocol'] = $objUrl->get('scheme') . '://';
 $result['host'] = $objUrl->get('host');
@@ -77,8 +60,12 @@ print_r($result);
 
 
 
-$fetcher = new UrlFetcher();
-$fetcher->setUrl('http://ribkat.mkgp.gov.si:8080/');
-$fetcher->fetchUrl(UrlFetcher::HTTP_GET, TRUE);
+
+$fetcher = new \T3census\Url\UrlFetcher();
+$fetcher->setUrl('http://www.studio-frauensache.de/');
+$fetcher->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, TRUE, FALSE);
+
 print_r($fetcher->getPort());
+print_r($fetcher->getResponseCookies());
+print_r($fetcher->getUrl());
 ?>
