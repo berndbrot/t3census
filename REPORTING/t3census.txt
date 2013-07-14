@@ -78,7 +78,6 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | ag             |        17 |
 | ee             |        17 |
 | us             |        17 |
-| www.ro         |        16 |
 | qc.ca          |        16 |
 | gv.at          |        14 |
 | gov.rw         |        14 |
@@ -260,3 +259,20 @@ mysql> SELECT host_domain,COUNT(host_id) AS num_hosts FROM host WHERE typo3_inst
 | drs.de           |       101 |
 +------------------+-----------+
 11 rows in set (0.46 sec)
+
+
+mysql> SELECT c.cidr_description,COUNT(h.host_id) AS num_hosts FROM server s INNER JOIN cidr c ON ((c.cidr_mask & s.server_ip) = c.cidr_ip) LEFT JOIN host h ON (s.server_id = h.fk_server_id) WHERE h.typo3_installed=1 GROUP BY c.cidr_description;
++-----------+-------------------------------------------------+
+| num_hosts | cidr_description                                |
++-----------+-------------------------------------------------+
+|       380 | Vienna University Computer Center               |
+|       213 | TU Berlin, campus network                       |
+|       176 | Republic of Slovenia - Ministry of Justice      |
+|       157 | Danish Network for Research and Education       |
+|       157 | Charite - Universitaetsmedizin Berlin           |
+|       150 | Bergische Universitaet Wuppertal                |
+|       136 | Leibniz-Rechenzentrum (LRZ)                     |
+|       114 | Gottfried Wilhelm Leibniz Universitaet Hannover |
+|       112 | Universitaet zu Koeln                           |
++-----------+-------------------------------------------------+
+9 rows in set (1.29 sec)
