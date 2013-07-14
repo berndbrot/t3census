@@ -4,7 +4,8 @@ $dir = dirname(__FILE__);
 $libraryDir = realpath($dir . '/../../library/php');
 $vendorDir = realpath($dir . '/../../vendor');
 
-require_once $libraryDir . '/Api/Bing/BingApi.php';
+require_once $libraryDir . '/Bing/Api/ReverseIpLookup.php';
+require_once $libraryDir . '/Bing/Scraper/ReverseIpLookup.php';
 require_once $vendorDir . '/autoload.php';
 
 class ReverseIpLookupWorker {
@@ -13,6 +14,7 @@ class ReverseIpLookupWorker {
 	private $port;
 	private $accountKey;
 	private $gearmanWorker;
+	private $useFallback = FALSE;
 
 	public function __construct($host = '127.0.0.1', $port = 4730, $accountKey = '') {
 		$this->host = $host;
@@ -30,11 +32,25 @@ class ReverseIpLookupWorker {
 		$result = FALSE;
 		$ip = $job->workload();
 
-		$bingApi = new BingApi();
-		$bingApi->setMaxResults(1000);
-		$bingApi->setAccountKey($this->accountKey)->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
-
-		$results = $bingApi->setQuery('ip:' . $ip)->getResults();
+		if ($this->useFallback) {
+			$objLookup = new \T3census\Bing\Scraper\ReverseIpLookup();
+			$objLookup->setEndpoint('http://www.bing.com/search');
+			$results = $objLookup->setQuery('ip:' . $ip)->getResults();
+			unset($objLookup);
+		} else {
+			try {
+				$objLookup = new T3census\Bing\Api\ReverseIpLookup();
+				$objLookup->setAccountKey($this->accountKey)->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
+				$results = $objLookup->setQuery('ip:' . $ip)->getResults();
+				unset($objLookup);
+			} catch (\T3census\Bing\Api\Exception\ApiConsumeException $e) {
+				$this->useFallback = TRUE;
+				$objLookup = new \T3census\Bing\Scraper\ReverseIpLookup();
+				$objLookup->setEndpoint('http://www.bing.com/search');
+				$results = $objLookup->setQuery('ip:' . $ip)->getResults();
+				unset($objLookup);
+			}
+		}
 
 		return json_encode($results);
 	}
