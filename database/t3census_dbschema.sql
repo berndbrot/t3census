@@ -64,8 +64,9 @@ CREATE TABLE host (
 
 CREATE TABLE twitter_user (
 	user_id    INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-	user_name  VARCHAR(255) DEFAULT NULL,
-	twitter_id BIGINT UNSIGNED NOT NULL,
+	user_name  VARCHAR(255)    NOT NULL,
+	twitter_id BIGINT UNSIGNED NULL,
+	subscribed  BOOL            NOT NULL DEFAULT 0,
 	PRIMARY KEY (user_id),
 	UNIQUE KEY unique_user_id (user_name),
 	UNIQUE KEY unique_user_name (twitter_id)
