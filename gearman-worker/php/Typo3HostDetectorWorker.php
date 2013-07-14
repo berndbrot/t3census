@@ -34,7 +34,7 @@ class Typo3HostDetectorWorker {
 		$content = '';
 
 		$fetcher = $this->getUrlFetcher()->setUrl($url);
-		$fetcher->fetchUrl(UrlFetcher::HTTP_GET, TRUE);
+		$fetcher->fetchUrl(T3census\Url\UrlFetcher::HTTP_GET, TRUE);
 
 		if ($fetcher->getErrno() === 0) {
 			if ($fetcher->getNumRedirects() >= 0)  $url = $fetcher->getUrl();
@@ -151,8 +151,8 @@ class Typo3HostDetectorWorker {
 	}
 
 	protected function getUrlFetcher() {
-		if (!is_object($this->urlFetcher) && !($this->urlFetcher instanceof UrlFetcher)) {
-			$this->urlFetcher = new UrlFetcher();
+		if (!is_object($this->urlFetcher) && !($this->urlFetcher instanceof T3census\Url\UrlFetcher)) {
+			$this->urlFetcher = new T3census\Url\UrlFetcher();
 		}
 
 		return $this->urlFetcher;
