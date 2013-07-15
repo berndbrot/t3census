@@ -1,3 +1,0 @@
-[submodule "dataimport/php/library/tmhOAuth"]
-	path = dataimport/php/library/tmhOAuth
-	url = git://github.com/themattharris/tmhOAuth.git
