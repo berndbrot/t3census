@@ -121,16 +121,13 @@ class UrlFetcher {
 			$this->responseHttpCode = $curlInfo['http_code'];
 		}
 
-		if (is_array($curlInfo) && array_key_exists('redirect_count', $curlInfo)) {
+		if (is_bool($followRedirects) && $followRedirects
+				&& is_array($curlInfo) && array_key_exists('redirect_count', $curlInfo)) {
 			$this->numRedirects = $curlInfo['redirect_count'];
-			if (array_key_exists('url', $curlInfo) && !empty($curlInfo['url'])) {
-				$this->url = $curlInfo['url'];
-			}
+			$this->url = $curlInfo['url'];
 		}
 
 		$this->errno = curl_errno($curl);
-
-#var_dump(get_object_vars($this));
 
 		curl_close($curl);
 		unset($curl);
