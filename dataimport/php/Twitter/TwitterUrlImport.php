@@ -243,16 +243,16 @@ function processUserUrls($user_name, $user_id, $twitter_id, $objMysql, $twitterA
 
 			#fwrite(STDOUT, sprintf('OLDEST Twitter ID: %u' . PHP_EOL, $oldestTwitterId));
 			if (count($response) > 0 && (is_null($since) || (!empty($lastUrl) && $since < $oldestTwitterId)) && $oldestTwitterId !== $max) {
-				unset($response);
-				$status = processUserUrls($user_name, $twitter_id, $objMysql, $twitterAuthData, $since, $oldestTwitterId, $status);
+				unset($response, $objTwitter);
+				$status = processUserUrls($user_name, $user_id, $twitter_id, $objMysql, $twitterAuthData, $since, $oldestTwitterId, $status);
 			} else {
-				unset($response);
+				unset($response, $objTwitter);
 			}
 		}
 	} else {
+		unset($objTwitter);
 		handleTwitterErrors($code, $response->errors);
 	}
-	unset($objTwitter);
 
 	return ($status);
 }
@@ -344,16 +344,16 @@ function processSearchUrls($queries, $objMysql, $twitterAuthData, $since = NULL,
 
 				#fwrite(STDOUT, sprintf('OLDEST Twitter ID: %u' . PHP_EOL, $oldestTwitterId));
 				if (count($response->statuses) > 0 && (is_null($since) || (!empty($lastUrl) && $since < $oldestTwitterId)) && $oldestTwitterId !== $max) {
-					unset($response);
-					$status = processSearchUrls($queries, $objMysql, $objTwitter, $since, $oldestTwitterId, $status);
+					unset($response, $objTwitter);
+					$status = processSearchUrls($queries, $objMysql, $twitterAuthData, $since, $oldestTwitterId, $status);
 				} else {
-					unset($response);
+					unset($response, $objTwitter);
 				}
 			}
 		} else {
+			unset($objTwitter);
 			handleTwitterErrors($code, $response->errors);
 		}
-		unset($objTwitter);
 	}
 
 	return ($status);
