@@ -244,7 +244,7 @@ function processUserUrls($user_name, $user_id, $twitter_id, $objMysql, $twitterA
 			#fwrite(STDOUT, sprintf('OLDEST Twitter ID: %u' . PHP_EOL, $oldestTwitterId));
 			if (count($response) > 0 && (is_null($since) || (!empty($lastUrl) && $since < $oldestTwitterId)) && $oldestTwitterId !== $max) {
 				unset($response);
-				$status = processUserUrls($user_name, $twitter_id, $objMysql, $objTwitter, $since, $oldestTwitterId, $status);
+				$status = processUserUrls($user_name, $twitter_id, $objMysql, $twitterAuthData, $since, $oldestTwitterId, $status);
 			} else {
 				unset($response);
 			}
