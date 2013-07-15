@@ -3,8 +3,8 @@ set_error_handler('CliErrorHandler');
 
 
 $dir = dirname(__FILE__);
-$libraryDir = realpath($dir . '/../../library/php');
-$vendorDir = realpath($dir . '/../../vendor');
+$libraryDir = realpath($dir . '/../../../library/php');
+$vendorDir = realpath($dir . '/../../../vendor');
 
 require_once $libraryDir . '/Twitter/Exception/AuthenticationException.php';
 require_once $libraryDir . '/Twitter/Exception/UserInvalidException.php';
