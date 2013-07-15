@@ -57,6 +57,7 @@ echo(PHP_EOL . $row['url_text']);
 					&& 0 !== strcmp($urlInfo['host'], 'j.mp')
 					&& 0 !== strcmp($urlInfo['host'], 'kck.st')
 					&& 0 !== strcmp($urlInfo['host'], 'krz.ch')
+					&& 0 !== strcmp($urlInfo['host'], 'lgsh.ch')
 					&& 0 !== strcmp($urlInfo['host'], 'lnkr.ch')
 					&& 0 !== strcmp($urlInfo['host'], 'moreti.me')
 					&& 0 !== strcmp($urlInfo['host'], 'myurl.to')
