@@ -66,7 +66,7 @@ print_r($urls);
 
 					if (is_object($selectRes)) {
 						if ($selectRes->num_rows == 0) {
-							echo('persist host ' . (is_null($host->subdomain) ? '' : $detectionResult->subdomain . '.') . $detectionResult->registerableDomain  . PHP_EOL);
+							echo('persist host ' . (is_null($detectionResult->subdomain) ? '' : $detectionResult->subdomain . '.') . $detectionResult->registerableDomain  . PHP_EOL);
 							persistHost($mysqli, $serverId, $detectionResult);
 						}
 						$selectRes->close();
