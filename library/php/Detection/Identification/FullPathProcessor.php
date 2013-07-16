@@ -2,6 +2,17 @@
 namespace T3census\Detection\Identification;
 
 
+$dir = dirname(__FILE__);
+$libraryDir = realpath($dir . '/../../../../library/php');
+$vendorDir = realpath($dir . '/../../../../vendor');
+
+require_once $libraryDir . '/Detection/AbstractProcessor.php';
+require_once $libraryDir . '/Detection/ProcessorInterface.php';
+require_once $libraryDir . '/Detection/DomParser.php';
+require_once $libraryDir . '/Url/UrlFetcher.php';
+require_once $vendorDir . '/autoload.php';
+
+
 class FullPathProcessor extends \T3census\Detection\AbstractProcessor implements \T3census\Detection\ProcessorInterface {
 
 	protected $allowRedirect = FALSE;
@@ -66,21 +77,23 @@ class FullPathProcessor extends \T3census\Detection\AbstractProcessor implements
 				$cookieKeys = array_keys($responseCookies);
 				$isTypo3Cookies = array_intersect($typo3CookiesKeys, $cookieKeys);
 				if (is_array($isTypo3Cookies) && count($isTypo3Cookies)) {
+					$context->setUrl($objRequest->getRequestUrl());
 					$context->setIsTypo3Cms(TRUE);
 					$isIdentificationSuccessful = TRUE;
 				}
 			}
 
 			if (!$isIdentificationSuccessful && is_string($responseBody) && strlen($responseBody)) {
-				//TODO
 				$objParser = new \T3census\Detection\DomParser($responseBody);
 				$objParser->parse();
 
-				if (!is_null($objParser->getMetaGenerator()) && is_string($objParser->getMetaGenerator()) && strpos($objParser->getMetaGenerator(), 'TYPO3') !== FALSE) {
+				$metaGenerator = $objParser->getMetaGenerator();
+				if (!is_null($metaGenerator) && is_string($metaGenerator) && strpos($metaGenerator, 'TYPO3') !== FALSE) {
+					$context->setUrl($objRequest->getRequestUrl());
 					$context->setIsTypo3Cms(TRUE);
 					$isIdentificationSuccessful = TRUE;
 				}
-				unset($objParser);
+				unset($metaGenerator, $objParser);
 			}
 
 			$context->addRequest($objRequest);

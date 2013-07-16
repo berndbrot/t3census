@@ -26,6 +26,11 @@ class Context {
 	protected $port;
 
 	/**
+	 * @var \T3census\Detection\Request[]
+	 */
+	protected $request = array();
+
+	/**
 	 * Keeps information whether TYPO3 CMS has been identified.
 	 *
 	 * @var bool
@@ -109,12 +114,6 @@ class Context {
 	}
 
 	/**
-	 * @var \T3census\Detection\Request[]
-	 */
-	protected $request = array();
-
-
-	/**
 	 * @param  \T3census\Detection\Request $request
 	 * @return  \T3census\Detection\Context
 	 */
@@ -150,7 +149,5 @@ class Context {
 	public function getUrl() {
 		return $this->url;
 	}
-
-
 }
 ?>

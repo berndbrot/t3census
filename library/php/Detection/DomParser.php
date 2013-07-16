@@ -41,7 +41,6 @@ class DomParser {
 		}
 
 		if (strpos($content, 'DOCTYPE')) {
-			echo('Remove Doctype' . PHP_EOL);
 			$content = preg_replace('/<!DOCTYPE.*>/sU','', $content);
 		}
 
@@ -85,7 +84,6 @@ class DomParser {
 			);
 		}
 		libxml_use_internal_errors(TRUE);
-		echo('INVOKED' . PHP_EOL);
 
 		$metaGenerator = '';
 		$dom = new \DOMDocument();
