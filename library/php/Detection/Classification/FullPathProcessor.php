@@ -52,7 +52,13 @@ class FullPathProcessor extends \T3census\Detection\AbstractProcessor implements
 
 				$metaGenerator = $objParser->getMetaGenerator();
 				if (!is_null($metaGenerator) && is_string($metaGenerator) && strpos($metaGenerator, 'TYPO3') !== FALSE) {
-					$context->setTypo3VersionString($metaGenerator);
+					$matches = array();
+					$isMatch = preg_match('/TYPO3 \d\.\d CMS/', $metaGenerator, $matches);
+					if (is_int($isMatch) && $isMatch === 1 && is_array($matches) && count($matches) == 1) {
+						$context->setTypo3VersionString(array_shift($matches));
+					} else {
+						$context->setTypo3VersionString($metaGenerator);
+					}
 					$isClassificationSuccessful = TRUE;
 				}
 				unset($metaGenerator, $objParser);
