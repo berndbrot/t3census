@@ -7,7 +7,7 @@ $vendorDir = realpath($dir . '/../../vendor');
 require_once $vendorDir . '/autoload.php';
 
 
-$gearmanHost = '46.252.26.103';
+$gearmanHost = '127.0.0.1';
 $gearmanStatus = getGearmanServerStatus($gearmanHost);
 
 # available
@@ -18,66 +18,88 @@ if (is_array($gearmanStatus)) {
 	// add the default server
 	$client->addServer($gearmanHost, 4730);
 
-	$mysqli = new mysqli("127.0.0.1", "t3census_dbu", "t3census", "t3census_db", 3306);
+	$mysqli = new mysqli('127.0.0.1', '', '', '', 3306);
 
 	$query = 'SELECT s.server_id,INET_NTOA(s.server_ip) AS server_ip,count(h.host_id) AS typo3hosts'
 			.' FROM server s RIGHT JOIN host h ON (s.server_id = h.fk_server_id)'
 			.' WHERE s.updated IS NULL AND h.typo3_installed=1'
 			.' GROUP BY s.server_id'
 			.' HAVING typo3hosts >= 1'
-			.' ORDER BY typo3hosts DESC LIMIT 30;';
-	$query = 'SELECT s.server_id,INET_NTOA(s.server_ip) AS server_ip FROM server s WHERE s.updated IS NULL LIMIT 5;';
-	echo($query . PHP_EOL);
+			.' ORDER BY typo3hosts DESC LIMIT 100;';
+	$query = 'SELECT updated,server_id,INET_NTOA(server_ip) AS server_ip FROM server WHERE NOT locked AND updated IS NULL ORDER BY RAND() LIMIT 100;';
+	#echo($query . PHP_EOL);
 
 	if ($res = $mysqli->query($query)) {
 
 		$date = new DateTime();
 
 		while ($row = $res->fetch_assoc()) {
-			$urls = array();
+			if (isServerLocked($mysqli, intval($row['server_ip']))) {
+				continue;
+			} else {
+				$updateQuery = sprintf('UPDATE server SET locked=1 WHERE server_id=%u;',
+					intval($row['server_id'])
+				);
+				$updateResult = $mysqli->query($updateQuery);
+				#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
+				if (!is_bool($updateResult) || !$updateResult) {
+					fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno));
+					$isSuccessful = FALSE;
+					break;
+				}
 
-			echo(PHP_EOL . $row['server_id'] . ' ' . $row['server_ip']);
+				$urls = array();
 
-			$urls = json_decode($client->do('ReverseIpLookup', $row['server_ip']));
-print_r($urls);
+				echo(PHP_EOL . $row['server_id'] . ' ' . $row['server_ip']);
+
+				$urls = json_decode($client->do('ReverseIpLookup', $row['server_ip']));
+				print_r($urls);
 
 
-			foreach($urls as $url) {
-				$detectionResult = json_decode($client->do('TYPO3HostDetector', $url));
+				foreach($urls as $url) {
+					$detectionResult = json_decode($client->do('TYPO3HostDetector', $url));
 #var_dump($detectionResult);
 
-				if (is_object($detectionResult)) {
-					if (is_null($detectionResult->port) || is_null($detectionResult->ip))  continue;
+					if (is_object($detectionResult)) {
+						if (is_null($detectionResult->port) || is_null($detectionResult->ip))  continue;
 
-					$portId = getPortId($mysqli, $detectionResult->port);
+						$portId = getPortId($mysqli, $detectionResult->port);
 
-					$serverId = getServerId($mysqli, $detectionResult->ip);
+						$serverId = getServerId($mysqli, $detectionResult->ip);
 
-					persistServerPortMapping($mysqli, $serverId, $portId);
+						persistServerPortMapping($mysqli, $serverId, $portId);
 
-					$selectQuery = sprintf('SELECT 1 FROM host '
-								.  'WHERE created IS NOT NULL AND host_subdomain LIKE %s AND host_domain LIKE \'%s\' '
-								.  'LIMIT 1',
-						(is_null($detectionResult->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($mysqli,$detectionResult->subdomain) . '\''),
-						$detectionResult->registerableDomain
-					);
-					$selectRes = $mysqli->query($selectQuery);
-					#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+						$selectQuery = sprintf('SELECT 1 FROM host '
+											.  'WHERE created IS NOT NULL AND host_subdomain LIKE %s AND host_domain LIKE \'%s\' '
+											.  'LIMIT 1',
+							(is_null($detectionResult->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($mysqli,$detectionResult->subdomain) . '\''),
+							$detectionResult->registerableDomain
+						);
+						$selectRes = $mysqli->query($selectQuery);
+						#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
 
-					if (is_object($selectRes)) {
-						if ($selectRes->num_rows == 0) {
-							echo('persist host ' . (is_null($detectionResult->subdomain) ? '' : $detectionResult->subdomain . '.') . $detectionResult->registerableDomain  . PHP_EOL);
-							persistHost($mysqli, $serverId, $detectionResult);
+						if (is_object($selectRes)) {
+							if ($selectRes->num_rows == 0) {
+								echo('persist host ' . (is_null($detectionResult->subdomain) ? '' : $detectionResult->subdomain . '.') . $detectionResult->registerableDomain  . PHP_EOL);
+								persistHost($mysqli, $serverId, $detectionResult);
+							}
+							$selectRes->close();
 						}
-						$selectRes->close();
 					}
 				}
+
+				$updateQuery = sprintf('UPDATE server SET locked=0,updated=\'%s\'  WHERE server_id=%u;',
+					$date->format('Y-m-d H:i:s'),
+					intval($row['server_id'])
+				);
+				$updateResult = $mysqli->query($updateQuery);
+				#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
+				if (!is_bool($updateResult) || !$updateResult) {
+					fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno));
+					$isSuccessful = FALSE;
+					break;
+				}
 			}
-
-
-			$queryUpdateOriginServer = 'UPDATE server SET updated=\'' . $date->format('Y-m-d H:i:s') . '\' WHERE server_id=' . $row['server_id'];
-			$queryUpdateOriginServerStatus = $mysqli->query($queryUpdateOriginServer);
-			if (!$queryUpdateOriginServerStatus)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
 		}
 	}
 
@@ -86,7 +108,24 @@ print_r($urls);
 }
 
 
+function isServerLocked($objMysql, $serverId) {
+	$isLocked = TRUE;
+	$selectQuery = sprintf('SELECT 1 FROM server WHERE server_id=%u AND NOT locked;',
+		$serverId
+	);
+	$res = $objMysql->query($selectQuery);
+	fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
 
+	if (is_object($res = $objMysql->query($selectQuery))) {
+
+		if ($res->num_rows == 1) {
+			$isLocked = FALSE;
+		}
+		$res->close();
+	}
+
+	return $isLocked;
+}
 
 function extractUrlsFrom($results) {
 	$urls = array();

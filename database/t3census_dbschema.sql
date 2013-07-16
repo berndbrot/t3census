@@ -24,6 +24,7 @@ CREATE TABLE server (
 	server_ip INT UNSIGNED    NOT NULL,
 	created   DATETIME        NOT NULL,
 	updated   DATETIME,
+	locked    BOOL            NOT NULL DEFAULT 0,
 	PRIMARY KEY (server_id),
 	UNIQUE KEY unique_server_ip (server_ip)
 )
