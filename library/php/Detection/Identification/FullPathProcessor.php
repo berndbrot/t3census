@@ -37,6 +37,8 @@ class FullPathProcessor extends \T3census\Detection\AbstractProcessor implements
 				1373924180
 			);
 		}
+
+		$this->allowRedirect = $allowRedirect;
 	}
 
 	/**
