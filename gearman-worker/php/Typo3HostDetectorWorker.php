@@ -44,9 +44,9 @@ class Typo3HostDetectorWorker {
 		$objPathNoRedirect = new \T3census\Detection\Identification\FullPathProcessor($objPathRedirect, FALSE);
 		$objHostRedirect = new \T3census\Detection\Identification\HostOnlyProcessor($objPathNoRedirect, TRUE);
 		$objHostNoRedirect = new \T3census\Detection\Identification\HostOnlyProcessor($objHostRedirect, FALSE);
-		$objShortener = \T3census\Detection\Identification\ShortenerRedirectOnlyProcessor($objHostNoRedirect);
+		$objShortener = new \T3census\Detection\Identification\ShortenerRedirectOnlyProcessor($objHostNoRedirect);
 		$objShortener->process($context);
-		unset($objHostNoRedirect, $objHostNoRedirect, $objHostRedirect, $objPathNoRedirect, $objPathRedirect);
+		unset($objShortener, $objHostNoRedirect, $objHostNoRedirect, $objHostRedirect, $objPathNoRedirect, $objPathRedirect);
 
 		if (is_bool($context->getIsTypo3Cms()) && $context->getIsTypo3Cms()) {
 			$objFullPath = new \T3census\Detection\Classification\FullPathProcessor();
