@@ -20,9 +20,8 @@ class Typo3ArtefactsProcessor extends \T3census\Detection\AbstractProcessor impl
 	 * Class constructor.
 	 *
 	 * @param  \T3census\Detection\ProcessorInterface|null  $successor
-	 * @param  bool $allowRedirect
 	 */
-	public function __construct($successor = NULL, $allowRedirect = FALSE) {
+	public function __construct($successor = NULL) {
 		if (!is_null($successor)) {
 			$this->successor = $successor;
 		}
