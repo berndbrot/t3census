@@ -1,4 +1,7 @@
 <?php
+set_error_handler('CliErrorHandler');
+
+
 $dir = dirname(__FILE__);
 $vendorDir = realpath($dir . '/../../vendor');
 
@@ -14,7 +17,7 @@ if ($mysqli->connect_errno) {
 $isSuccessful = TRUE;
 $selectQuery = 'SELECT host_id,host_name,host_domain FROM host WHERE typo3_installed=1 AND (host_scheme IS NULL OR host_domain IS NULL);';
 $res = $mysqli->query($selectQuery);
-printf('DEBUG: Query: %s:' . PHP_EOL, $selectQuery);
+fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
 
 if (is_object($res = $mysqli->query($selectQuery))) {
 	while ($row = $res->fetch_assoc()) {
@@ -39,10 +42,10 @@ if (is_object($res = $mysqli->query($selectQuery))) {
 			(is_null($result['registerableDomain']) ? NULL : '\'' . mysqli_real_escape_string($mysqli, $result['registerableDomain']) . '\''),
 			(is_null($result['publicSuffix']) ? NULL : '\'' . mysqli_real_escape_string($mysqli, $result['publicSuffix']) . '\''),
 			$row['host_id']);
+		fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
 		$updateResult= $mysqli->query($updateQuery);
 		if (!is_bool($updateResult) || !$updateResult) {
-			printf('DEBUG: Query: %s' . PHP_EOL, $updateQuery);
-			printf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno);
+			fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno));
 			$isSuccessful = FALSE;
 			break;
 		}
@@ -60,5 +63,9 @@ if (is_bool($isSuccessful) && $isSuccessful) {
 	exit(0);
 } else {
 	die(1);
+}
+
+function CliErrorHandler($errno, $errstr, $errfile, $errline) {
+	fwrite(STDERR, $errstr . ' in ' . $errfile . ' on ' . $errline . PHP_EOL);
 }
 ?>
