@@ -1,108 +1,60 @@
 mysql> SELECT count(host_id),typo3_versionstring FROM host WHERE typo3_installed = 1 GROUP BY typo3_versionstring;
-+----------------+------------------------------------------------------------------------+
-| count(host_id) | typo3_versionstring                                                    |
-+----------------+------------------------------------------------------------------------+
-|           1398 | NULL                                                                   |
-|              1 | BBEdit 9.2TYPO3 4.1 CMS                                                |
-|              2 | Contrexx   Web Content Management SystemTYPO3 4.4 CMS                  |
-|              3 | Handcoded - believe it or notTYPO3 4.2 CMS                             |
-|              4 | HTML Tidy for Linux (vers 1 September 2005), see www.w3.orgTYPO3       |
-|              2 | HTML Tidy for Linux (vers 11 February 2007), see www.w3.orgTYPO3       |
-|              7 | HTML Tidy for Linux (vers 25 March 2009), see www.w3.orgTYPO3 4.       |
-|             24 | HTML Tidy for Linux (vers 31 October 2006), see www.w3.orgTYPO3        |
-|             13 | HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.orgG       |
-|              1 | HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.orgT       |
-|             21 | HTML Tidy for Linux/x86 (vers 21 March 2007), see www.w3.orgTYPO       |
-|              9 | HTML Tidy for Linux/x86 (vers 25 March 2009), see www.w3.orgTYPO       |
-|             17 | HTML Tidy for Linux/x86 (vers 6 November 2007), see www.w3.orgTY       |
-|              1 | HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build        |
-|              1 | http://www.ensarmedia.deTYPO3 4.2 CMS                                  |
-|              3 | MSHTML 6.00.2800.1589TYPO3 4.1 CMS                                     |
-|              1 | Namo WebEditor v5.0TYPO3 4.0 CMS                                       |
-|              1 | PSPad editor, www.pspad.comTYPO3 4.2 CMS                               |
-|              1 | SDVC MEDIEN GMBH - wir machen's einfach - http://www.sdvc.deTYPO       |
-|              1 | TYPO3                                                                  |
-|              1 | TYPO3  CMS                                                             |
-|              2 | TYPO3 - CMS                                                            |
-|             20 | TYPO3 3.6 CMS                                                          |
-|             84 | TYPO3 3.7 CMS                                                          |
-|            259 | TYPO3 3.8 CMS                                                          |
-|            406 | TYPO3 4.0 CMS                                                          |
-|              2 | TYPO3 4.0 CMSUlli Meybohms HTML EDITOR                                 |
-|           1316 | TYPO3 4.1 CMS                                                          |
-|              1 | TYPO3 4.1 CMSa nice typo3 system                                       |
-|              1 | TYPO3 4.1 CMSmedialis marketing GmbH                                   |
-|              1 | TYPO3 4.1, http://typo3.com, Â© Kasper SkÃ¥rhÃ¸j 1998-2006, exte       |
-|           3074 | TYPO3 4.2 CMS                                                          |
-|              2 | TYPO3 4.2 CMSTypo3                                                     |
-|           1428 | TYPO3 4.3 CMS                                                          |
-|              1 | TYPO3 4.3 CMSMSHTML 6.00.2800.1589                                     |
-|              1 | TYPO3 4.3 CMSTypo3                                                     |
-|           2480 | TYPO3 4.4 CMS                                                          |
-|              2 | TYPO3 4.4 CMSGNU Emacs 23.1.1                                          |
-|              2 | TYPO3 4.4 CMSJoomla! 1.5 - Open Source Content Management              |
-|              1 | TYPO3 4.4 CMSTYPO3 4.4 CMS                                             |
-|          14431 | TYPO3 4.5 CMS                                                          |
-|              1 | TYPO3 4.5 CMSAdobe GoLive 6                                            |
-|              1 | TYPO3 4.5 CMSBoks - 0.3.4                                              |
-|              1 | TYPO3 4.5 CMSBoks - 0.5.8                                              |
-|              2 | TYPO3 4.5 CMSPSPad editor, www.pspad.com                               |
-|              1 | TYPO3 4.5 CMSTypo3 - Content Management System                         |
-|              1 | TYPO3 4.5 CMSTYPO3 4.0 CMS                                             |
-|              2 | TYPO3 4.5 CMSTYPO3 4.5 CMS                                             |
-|              2 | TYPO3 4.5 CMSunsere neue couch, machessa                               |
-|              1 | TYPO3 4.5 CMSWeb2Date BASIC                                            |
-|              1 | TYPO3 4.5 CMSwww.thiel-marketing.net                                   |
-|              1 | TYPO3 4.5 CMSwww.wittkiel-gruppe.de                                    |
-|           1439 | TYPO3 4.6 CMS                                                          |
-|              3 | TYPO3 4.6 CMSAdvance.Media GbR                                         |
-|              4 | TYPO3 4.6 CMSGraphik-Web-Design - Hagen, Germany                       |
-|           2785 | TYPO3 4.7 CMS                                                          |
-|              1 | TYPO3 4.7 CMSBoks - 0.3.4                                              |
-|              1 | TYPO3 4.7 CMSBoks - 0.5.1                                              |
-|              1 | TYPO3 4.7 CMSBoks - 0.5.8                                              |
-|              2 | TYPO3 4.7 CMSincore.at                                                 |
-|              2 | TYPO3 4.7 CMSonscreen                                                  |
-|              8 | TYPO3 4.7 CMSTYPO3 CMS                                                 |
-|            372 | TYPO3 6.0 CMS                                                          |
-|            127 | TYPO3 6.1 CMS                                                          |
-|              1 | www.thiel-marketing.netTYPO3 4.2 CMS                                   |
-+----------------+------------------------------------------------------------------------+
-65 rows in set (0.19 sec)
++----------------+---------------------+
+| count(host_id) | typo3_versionstring |
++----------------+---------------------+
+|           1317 | NULL                |
+|              1 | TYPO3  CMS          |
+|              2 | TYPO3 - CMS         |
+|             20 | TYPO3 3.6 CMS       |
+|             86 | TYPO3 3.7 CMS       |
+|            261 | TYPO3 3.8 CMS       |
+|            424 | TYPO3 4.0 CMS       |
+|           1336 | TYPO3 4.1 CMS       |
+|           3119 | TYPO3 4.2 CMS       |
+|           1436 | TYPO3 4.3 CMS       |
+|           2500 | TYPO3 4.4 CMS       |
+|          14562 | TYPO3 4.5 CMS       |
+|           1479 | TYPO3 4.6 CMS       |
+|           2825 | TYPO3 4.7 CMS       |
+|              1 | TYPO3 5.0 CMS       |
+|            377 | TYPO3 6.0 CMS       |
+|            139 | TYPO3 6.1 CMS       |
++----------------+---------------------+
+17 rows in set (0.19 sec)
 
 
 mysql> SELECT COUNT(host_id) FROM host WHERE typo3_installed;
 +----------------+
 | COUNT(host_id) |
 +----------------+
-|          29786 |
+|          29886 |
 +----------------+
-1 row in set (0.07 sec)
+1 row in set (0.12 sec)
 
 
 mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_suffix ORDER BY num_hosts DESC;
 +----------------+-----------+
 | publicSuffix   | num_hosts |
 +----------------+-----------+
-| de             |     13676 |
-| com            |      4553 |
-| ch             |      1832 |
+| de             |     13702 |
+| com            |      4563 |
+| ch             |      1835 |
 | at             |      1604 |
-| org            |      1198 |
+| org            |      1230 |
 | dk             |       921 |
-| net            |       659 |
-| eu             |       576 |
+| net            |       671 |
+| eu             |       577 |
 | info           |       559 |
-| fr             |       499 |
-| nl             |       478 |
+| fr             |       501 |
+| nl             |       485 |
 | ac.at          |       400 |
-| it             |       298 |
+| it             |       299 |
 | si             |       204 |
 | be             |       204 |
 | ca             |       183 |
 | com.au         |       152 |
-| se             |       107 |
-| co.uk          |        98 |
+| se             |       108 |
+| co.uk          |        99 |
 | biz            |        90 |
 | ie             |        78 |
 | edu.tr         |        77 |
@@ -130,8 +82,8 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | us             |        17 |
 | ag             |        17 |
 | qc.ca          |        16 |
-| gov.rw         |        14 |
 | gv.at          |        14 |
+| gov.rw         |        14 |
 | mobi           |        13 |
 | com.tr         |        12 |
 | de.com         |        12 |
@@ -139,8 +91,8 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | net.au         |        11 |
 | in             |        11 |
 | lt             |        11 |
-| asia           |        11 |
 | dz             |        11 |
+| asia           |        11 |
 | nu             |        10 |
 | ac.uk          |        10 |
 | co.za          |        10 |
@@ -149,11 +101,11 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | am             |         9 |
 | uk.com         |         9 |
 | lv             |         9 |
-| com.pl         |         8 |
+| or.at          |         8 |
 | bg             |         8 |
+| com.pl         |         8 |
 | li             |         8 |
 | hr             |         8 |
-| or.at          |         8 |
 | com.cn         |         7 |
 | com.br         |         7 |
 | by             |         6 |
@@ -168,6 +120,7 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | gov.pl         |         4 |
 | co             |         4 |
 | co.jp          |         4 |
+| to             |         4 |
 | sk.ca          |         4 |
 | co.kr          |         4 |
 | sg             |         4 |
@@ -183,14 +136,15 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | bc.ca          |         3 |
 | com.sg         |         3 |
 | eu.com         |         3 |
-| to             |         3 |
-| ws             |         3 |
 | go.th          |         3 |
+| ws             |         3 |
 | org.co         |         3 |
 | pro            |         3 |
 | kr             |         3 |
 | com.ar         |         3 |
 | rw             |         3 |
+| gov.af         |         2 |
+| md             |         2 |
 | ra.it          |         2 |
 | se.com         |         2 |
 | co.id          |         2 |
@@ -200,58 +154,62 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | asn.au         |         2 |
 | is             |         2 |
 | info.tr        |         2 |
-| firenze.it     |         2 |
+| me             |         2 |
 | my             |         2 |
-| org.na         |         2 |
+| firenze.it     |         2 |
 | NULL           |         2 |
 | tn.it          |         2 |
+| org.na         |         2 |
 | ac.in          |         2 |
 | com.ru         |         2 |
-| gl             |         2 |
 | kr.com         |         2 |
 | travel         |         2 |
-| gov.af         |         2 |
-| md             |         2 |
+| gl             |         2 |
+| genova.it      |         1 |
+| aero           |         1 |
+| org.fj         |         1 |
+| hn             |         1 |
 | vg             |         1 |
 | st             |         1 |
 | net.nz         |         1 |
 | com.ve         |         1 |
 | ar.com         |         1 |
-| hk             |         1 |
 | nhs.uk         |         1 |
 | govt.nz        |         1 |
 | us.org         |         1 |
+| hk             |         1 |
 | ud.it          |         1 |
 | grosseto.it    |         1 |
 | ua             |         1 |
 | presse.fr      |         1 |
-| kz             |         1 |
 | co.in          |         1 |
 | com.dz         |         1 |
 | com.bd         |         1 |
 | com.my         |         1 |
-| fm             |         1 |
+| kz             |         1 |
 | za.org         |         1 |
 | tt             |         1 |
-| uz             |         1 |
+| fm             |         1 |
 | co.ke          |         1 |
 | salerno.it     |         1 |
 | ac             |         1 |
 | coop           |         1 |
-| pn.it          |         1 |
+| ly             |         1 |
+| uz             |         1 |
 | com.kh         |         1 |
 | alessandria.it |         1 |
 | com.ec         |         1 |
 | com.uy         |         1 |
-| ug             |         1 |
+| pn.it          |         1 |
 | k12.ny.us      |         1 |
 | vn             |         1 |
+| ug             |         1 |
 | co.ug          |         1 |
 | varese.it      |         1 |
 | gb.com         |         1 |
 | org.eg         |         1 |
 | rs             |         1 |
-| me             |         1 |
+| io             |         1 |
 | bf             |         1 |
 | benevento.it   |         1 |
 | co.hu          |         1 |
@@ -276,21 +234,17 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | vu             |         1 |
 | com.mx         |         1 |
 | ae.org         |         1 |
-| hn             |         1 |
-| genova.it      |         1 |
-| aero           |         1 |
-| org.fj         |         1 |
 +----------------+-----------+
-196 rows in set (0.10 sec)
+198 rows in set (0.13 sec)
 
 
 mysql> SELECT COUNT(DISTINCT host_domain) FROM host WHERE typo3_installed;
 +-----------------------------+
 | COUNT(DISTINCT host_domain) |
 +-----------------------------+
-|                       22997 |
+|                       23043 |
 +-----------------------------+
-1 row in set (0.20 sec)
+1 row in set (0.18 sec)
 
 
 mysql> SELECT host_domain,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_domain HAVING num_hosts > 100 ORDER BY num_hosts DESC;
@@ -307,9 +261,10 @@ mysql> SELECT host_domain,COUNT(host_id) AS num_hosts FROM host WHERE typo3_inst
 | au.dk            |       111 |
 | uni-koeln.de     |       109 |
 | uni-hannover.de  |       103 |
+| typo3.org        |       101 |
 | drs.de           |       101 |
 +------------------+-----------+
-11 rows in set (0.47 sec)
+12 rows in set (0.34 sec)
 
 
 mysql> SELECT c.cidr_description,COUNT(h.host_id) AS num_hosts FROM server s INNER JOIN cidr c ON ((c.cidr_mask & s.server_ip) = c.cidr_ip) LEFT JOIN host h ON (s.server_id = h.fk_server_id) WHERE h.typo3_installed=1 GROUP BY c.cidr_description HAVING num_hosts > 100 ORDER BY num_hosts DESC;
@@ -326,4 +281,4 @@ mysql> SELECT c.cidr_description,COUNT(h.host_id) AS num_hosts FROM server s INN
 | Gottfried Wilhelm Leibniz Universitaet Hannover |       114 |
 | Universitaet zu Koeln                           |       112 |
 +-------------------------------------------------+-----------+
-9 rows in set (0.98 sec)
+9 rows in set (0.92 sec)
