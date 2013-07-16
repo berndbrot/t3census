@@ -1,146 +1,224 @@
 <?php
+set_error_handler('CliErrorHandler');
+
 $dir = dirname(__FILE__);
-require_once $dir . '/../../gearman-worker/php/UrlNormalizer.php';
+$libraryDir = realpath($dir . '/../../library/php');
+$vendorDir = realpath($dir . '/../../vendor');
 
+require_once $libraryDir . '/Gearman/Serverstatus.php';
+require_once $vendorDir . '/autoload.php';
 
-/**
- * Created by JetBrains PhpStorm.
- * User: marcus
- * Date: 26.05.13
- * Time: 23:28
- * To change this template use File | Settings | File Templates.
- */
-
-// construct a client object
-#$client= new GearmanClient();
-// add the default server
-#$client->addServer();
-
-// print the output of the job. first parameter is the job name, second one is the parameter
-#print $client->do("process_string", "Hello Gearman!");
-
-$gearmanHost = '127.0.0.1';
-
-$gearmanStatus = getStatus($gearmanHost);
-
-# available
-if (is_array($gearmanStatus)) {
-
-	// construct a client object
-	$client= new GearmanClient();
-	// add the default server
-	$client->addServer($gearmanHost, 4730);
-
-	$mysqli = new mysqli("127.0.0.1", "X", "Y", "Z", 3306);
-
-#	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE AND t.tweet_text LIKE '%to TYPO3%' ORDER BY t.created ASC")) {
-#	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE AND t.tweet_text LIKE '%TYPO3%' ORDER BY t.created ASC")) {
-	if ($res = $mysqli->query("SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) WHERE t.tweet_processed = FALSE ORDER BY t.created ASC LIMIT 300")) {
-		while ($row = $res->fetch_assoc()) {
-#var_dump($row);
-echo(PHP_EOL . $row['url_text']);
-
-			$normalizer = new UrlNormalizer();
-			$urlInfo = $normalizer->setOriginUrl($row['url_text'])->getNormalizedUrl();
-#var_dump($urlInfo);
-
-			if (0 !== strcmp($urlInfo['host'], 'b-gat.es')
-					&& 0 !== strcmp($urlInfo['host'], 'bit.ly')
-					&& 0 !== strcmp($urlInfo['host'], 'buff.ly')
-					&& 0 !== strcmp($urlInfo['host'], 'csc0.ly')
-					&& 0 !== strcmp($urlInfo['host'], 'eepurl.com')
-					&& 0 !== strcmp($urlInfo['host'], 'fb.me')
-					&& 0 !== strcmp($urlInfo['host'], 'dlvr.it')
-					&& 0 !== strcmp($urlInfo['host'], 'goo.gl')
-					&& 0 !== strcmp($urlInfo['host'], 'indu.st')
-					&& 0 !== strcmp($urlInfo['host'], 'is.gd')
-					&& 0 !== strcmp($urlInfo['host'], 'j.mp')
-					&& 0 !== strcmp($urlInfo['host'], 'kck.st')
-					&& 0 !== strcmp($urlInfo['host'], 'krz.ch')
-					&& 0 !== strcmp($urlInfo['host'], 'lgsh.ch')
-					&& 0 !== strcmp($urlInfo['host'], 'lnkr.ch')
-					&& 0 !== strcmp($urlInfo['host'], 'moreti.me')
-					&& 0 !== strcmp($urlInfo['host'], 'myurl.to')
-					&& 0 !== strcmp($urlInfo['host'], 'npub.li')
-					&& 0 !== strcmp($urlInfo['host'], 'nkirch.de')
-					&& 0 !== strcmp($urlInfo['host'], 'nkor.de')
-					&& 0 !== strcmp($urlInfo['host'], 'opnstre.am')
-					&& 0 !== strcmp($urlInfo['host'], 'ow.ly')
-					&& 0 !== strcmp($urlInfo['host'], 'shar.es')
-					&& 0 !== strcmp($urlInfo['host'], 't3n.me')
-					&& 0 !== strcmp($urlInfo['host'], 'tinyurl.com')
-					&& 0 !== strcmp($urlInfo['host'], 'ur1.ca')
-					&& 0 !== strcmp($urlInfo['host'], 'xing.com')
-					&& 0 !== strcmp($urlInfo['host'], 'zite.to')) {
-				$result = $mysqli->query("SELECT 1 FROM host WHERE created IS NOT NULL AND host_name LIKE CONCAT('%','" . mysqli_real_escape_string($mysqli, $urlInfo['host']) . "') LIMIT 1;" );
-				if ($result->num_rows > 0) {
-					echo(' - PASS');
-					$result->close();
-					$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
-					continue;
-				}
-				$result->close();
-			}
-
-
-			$detectionResult = json_decode($client->do("TYPO3HostDetector", $row['url_text']));
-#var_dump($detectionResult);
-
-			if (is_object($detectionResult)) {
-				if (is_null($detectionResult->port) || is_null($detectionResult->ip))  continue;
-
-				$portId = getPortId($mysqli, $detectionResult->port);
-
-				$serverId = getServerId($mysqli, $detectionResult->ip);
-
-				persistServerPortMapping($mysqli, $serverId, $portId);
-				persistHost($mysqli, $serverId, $detectionResult);
-
-				$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
-			} else if (is_bool($detectionResult) && !$detectionResult) {
-				$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
-			}
-		}
-		$res->close();
-
-		// print the output of the job. first parameter is the job name, second one is the parameter
-		#print $client->do("process_string", "Hello Gearman!");
-	}
-
-	mysqli_close($mysqli);
-	echo(PHP_EOL);
+$mysqli = @new mysqli('127.0.0.1', 'X', 'Y', 'Z', 3306);
+if ($mysqli->connect_errno) {
+	fwrite(STDERR, sprintf('ERROR: Database-Server: %s (Errno: %u)' . PHP_EOL, $mysqli->connect_error, $mysqli->connect_errno));
+	die(1);
 }
 
-function persistHost($mysqli, $serverId, $host) {
-	#echo("SELECT host_id FROM host WHERE fk_server_id = " . intval($serverId) . " AND host_name = '" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "';");
-	if ($result = $mysqli->query("SELECT host_id FROM host WHERE fk_server_id = " . intval($serverId) . " AND host_name = '" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "';" )) {
+$gearmanHost = '127.0.0.1';
+$gearmanPort = 4730;
+$gearmanFunction = 'TYPO3HostDetector';
+try {
+	$gearmanStatus = new T3census\Gearman\Serverstatus();
+	$gearmanStatus->setHost($gearmanHost)->setPort($gearmanPort);
+	$gearmanStatus->poll();
 
-		$date = new DateTime();
-		if ($result->num_rows == 0) {
-			$foo1 = $mysqli->query("INSERT INTO host(host_name,host_domain,fk_server_id,typo3_installed,host_path,typo3_versionstring,created) "
-				. "VALUES ('" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "',"
-				. "'" . mysqli_real_escape_string($mysqli, $host->host) . "',"
-				. $serverId . ","
-				. ($host->TYPO3 ? 1 : 0) . ","
-				. "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
-				. ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
-				. "'" . $date->format('Y-m-d H:i:s') . "');");
-			if (!$foo1)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
-		} else {
-			$row = $result->fetch_assoc();
-			$hostId = intval($row['host_id']);
-			$foo2 = $mysqli->query("UPDATE host SET "
-				. "typo3_installed=" . ($host->TYPO3 ? 1 : 0) . ","
-				. "typo3_versionstring=" . ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
-				. "host_path=" . "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
-				. "created=" . "'" . $date->format('Y-m-d H:i:s') . "'"
-				. " WHERE created IS NULL AND host_id=" .$hostId);
-			if (!$foo2)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
-			echo (PHP_EOL . 'UPDATE');
+	if (!$gearmanStatus->hasFunction($gearmanFunction)) {
+		fwrite(STDERR, sprintf('ERROR: Job-Server: Requested function %s not available (Errno: %u)' . PHP_EOL, $gearmanFunction, 1373751780));
+		die(1);
+	}
+	if (!$gearmanStatus->getNumberOfWorkersByFunction($gearmanFunction) > 0) {
+		fwrite(STDERR, sprintf('ERROR: Job-Server: No workers for function %s available (Errno: %u)' . PHP_EOL, $gearmanFunction, 1373751783));
+		die(1);
+	}
+} catch (GearmanException $e) {
+	fwrite(STDERR, sprintf('ERROR: Job-Server: %s (Errno: %u)' . PHP_EOL, $e->getMessage(), $e->getCode()));
+	die(1);
+}
+unset($gearmanStatus);
+$isSuccessful = TRUE;
+
+
+$client= new GearmanClient();
+$client->addServer($gearmanHost, $gearmanPort);
+
+$selectQuery = 'SELECT t.tweet_id,t.created,t.tweet_processed,u.url_text '
+			.  'FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id) '
+			.  'WHERE NOT t.tweet_processed '
+			.  'ORDER BY t.created ASC;';
+$res = $mysqli->query($selectQuery);
+#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+if (is_object($res)) {
+	while ($row = $res->fetch_assoc()) {
+		echo($row['url_text'] . PHP_EOL);
+
+		$objUrl = \Purl\Url::parse($row['url_text']);
+		$result = array();
+
+		if (!isShortenerServiceHost($objUrl->get('host'))) {
+			$selectQuery = sprintf('SELECT 1 '
+						.  'FROM host '
+						.  'WHERE created IS NOT NULL AND host_scheme LIKE \'%s\' AND host_subdomain LIKE %s AND host_domain LIKE \'%s\' '
+						.  'LIMIT 1;',
+				$objUrl->get('scheme'),
+				(is_null($objUrl->get('subdomain')) ? 'NULL' : '\'' . mysqli_real_escape_string($mysqli, $objUrl->get('subdomain')) . '\''),
+				$objUrl->get('registerableDomain')
+			);
+			$selectRes = $mysqli->query($selectQuery);
+			#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+			if (is_object($selectRes))  {
+				if ($selectRes->num_rows > 0) {
+					echo('PASS' . PHP_EOL);
+					$updateQuery = sprintf('UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id=%u;',
+						$row['tweet_id']
+					);
+					$updateResult= $mysqli->query($updateQuery);
+					#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
+					if (!is_bool($updateResult) || !$updateResult) {
+						fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno));
+						$isSuccessful = FALSE;
+						break;
+					}
+					continue;
+				}
+				$selectRes->close();
+			} else {
+				fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno));
+				$isSuccessful = FALSE;
+				break;
+			}
 		}
 
-		/* free result set */
-		$result->close();
+		$detectionResult = json_decode($client->doNormal('TYPO3HostDetector', $row['url_text']));
+		#print_r($detectionResult);
+
+		if (is_object($detectionResult)) {
+			if (is_null($detectionResult->port) || is_null($detectionResult->ip))  continue;
+
+			$portId = getPortId($mysqli, $detectionResult->port);
+
+			$serverId = getServerId($mysqli, $detectionResult->ip);
+
+			persistServerPortMapping($mysqli, $serverId, $portId);
+			persistHost($mysqli, $serverId, $detectionResult);
+
+			$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
+		} else if (is_bool($detectionResult) && !$detectionResult) {
+			$mysqli->query("UPDATE twitter_tweet SET tweet_processed = 1 WHERE tweet_id = " . intval($row['tweet_id']));
+		}
+	}
+
+	$res->close();
+} else {
+	fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno));
+	$isSuccessful = FALSE;
+}
+
+mysqli_close($mysqli);
+
+if (is_bool($isSuccessful) && $isSuccessful) {
+	exit(0);
+} else {
+	die(1);
+}
+
+
+
+
+function isShortenerServiceHost($host) {
+	$shortenerServices = array(
+		'b-gat.es',
+		'bit.ly',
+		'buff.ly',
+		'csc0.ly',
+		'eepurl.com',
+		'fb.me',
+		'dlvr.it',
+		'goo.gl',
+		'indu.st',
+		'is.gd',
+		'j.mp',
+		'kck.st',
+		'krz.ch',
+		'lnkr.ch',
+		'moreti.me',
+		'myurl.to',
+		'npub.li',
+		'nkirch.de',
+		'nkor.de',
+		'opnstre.am',
+		'ow.ly',
+		'shar.es',
+		't3n.me',
+		'tinyurl.com',
+		'ur1.ca',
+		'xing.com',
+		'zite.to',
+	);
+
+	return (in_array($host, $shortenerServices, TRUE));
+}
+
+function persistHost($objMysql, $serverId, $host) {
+
+	$selectQuery = sprintf('SELECT host_id '
+						.  'FROM host '
+						.  'WHERE fk_server_id=%u AND host_scheme LIKE \'%s\' AND host_subdomain LIKE %s AND host_domain LIKE \'%s\';',
+		$serverId,
+		$host->scheme,
+		(is_null($host->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql, $host->subdomain) . '\''),
+		$host->registerableDomain
+	);
+	$selectRes = $objMysql->query($selectQuery);
+	#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+
+	if (is_object($selectRes)) {
+
+		$date = new DateTime();
+		if ($selectRes->num_rows == 0) {
+			$insertQuery = sprintf('INSERT INTO host(typo3_installed,typo3_versionstring,host_name,host_scheme,host_subdomain,host_domain,host_suffix,host_path,created,fk_server_id) ' .
+				'VALUES(%u,%s,NULL,\'%s\',%s,\'%s\',%s,%s,\'%s\',%u);',
+				($host->TYPO3 ? 1 : 0),
+				($host->TYPO3 && !empty($host->TYPO3version) ? '\'' . mysqli_real_escape_string($objMysql, $host->TYPO3version)  . '\'' : 'NULL'),
+				mysqli_real_escape_string($objMysql, $host->scheme),
+				(is_null($host->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->subdomain) . '\''),
+				$host->registerableDomain,
+				(is_null($host->publicSuffix) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->publicSuffix) . '\''),
+				(is_null($host->path) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->path) . '\''),
+				$date->format('Y-m-d H:i:s'),
+				$serverId
+			);
+			#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $insertQuery));
+			$insertResult = $objMysql->query($insertQuery);
+			if (!is_bool($insertResult) || !$insertResult) {
+				fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $objMysql->error, $objMysql->errno));
+				return;
+			}
+		} else {
+			$row = $selectRes->fetch_assoc();
+
+			$updateQuery = sprintf('UPDATE host '
+								.  'SET host_scheme=%s,host_subdomain=%s,host_domain=%s,host_suffix=%s,host_path=%s,typo3_installed=%u,typo3_versionstring=%s,updated=\'%s\',host_name=NULL '
+								.  'WHERE host_id=%u;',
+				(is_null($host->scheme) ? NULL : '\'' . mysqli_real_escape_string($objMysql, $host->scheme) . '\''),
+				(is_null($host->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql, $host->subdomain) . '\''),
+				(is_null($host->registerableDomain) ? NULL : '\'' . mysqli_real_escape_string($objMysql, $host->registerableDomain) . '\''),
+				(is_null($host->publicSuffix) ? NULL : '\'' . mysqli_real_escape_string($objMysql, $host->publicSuffix) . '\''),
+				(is_null($host->path) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->path) . '\''),
+				($host->TYPO3 ? 1 : 0),
+				($host->TYPO3 && !empty($host->TYPO3version) ? '\'' . mysqli_real_escape_string($objMysql, $host->TYPO3version)  . '\'' : 'NULL'),
+				$date->format('Y-m-d H:i:s'),
+				$row['host_id']);
+			#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
+			$updateResult= $objMysql->query($updateQuery);
+			if (!is_bool($updateResult) || !$updateResult) {
+				fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $objMysql->error, $objMysql->errno));
+				return;
+			}
+		}
+
+		$selectRes->close();
+	} else {
+		fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $objMysql->error, $objMysql->errno));
 	}
 }
 
@@ -200,51 +278,8 @@ function getPortId($mysqli, $port) {
 	return $portId;
 }
 
-/**
- * @return array | null
- */
-function getStatus($host = '127.0.0.1', $port = 4730) {
-	$status = null;
 
-	$handle = fsockopen($host, $port, $errorNumber, $errorString, 30);
-	if ($handle != null){
-		fwrite($handle,"status\n");
-		while (!feof($handle)) {
-			$line = fgets($handle, 4096);
-			if( $line==".\n"){
-				break;
-			}
-			if( preg_match("~^(.*)[ \t](\d+)[ \t](\d+)[ \t](\d+)~",$line,$matches) ){
-				$function = $matches[1];
-				$status['operations'][$function] = array(
-					'function' => $function,
-					'total' => $matches[2],
-					'running' => $matches[3],
-					'connectedWorkers' => $matches[4],
-				);
-			}
-		}
-		fwrite($handle,"workers\n");
-		while (!feof($handle)) {
-			$line = fgets($handle, 4096);
-			if( $line==".\n"){
-				break;
-			}
-			// FD IP-ADDRESS CLIENT-ID : FUNCTION
-			if( preg_match("~^(\d+)[ \t](.*?)[ \t](.*?) : ?(.*)~",$line,$matches) ){
-				$fd = $matches[1];
-				$status['connections'][$fd] = array(
-					'fd' => $fd,
-					'ip' => $matches[2],
-					'id' => $matches[3],
-					'function' => $matches[4],
-				);
-			}
-		}
-		fclose($handle);
-	}
-
-	return $status;
+function CliErrorHandler($errno, $errstr, $errfile, $errline) {
+	fwrite(STDERR, $errstr . ' in ' . $errfile . ' on ' . $errline . PHP_EOL);
 }
-
 ?>
