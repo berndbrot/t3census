@@ -5,6 +5,7 @@ $vendorDir = realpath($dir . '/../../vendor');
 
 require_once $libraryDir . '/Detection/Context.php';
 require_once $libraryDir . '/Detection/Request.php';
+require_once $libraryDir . '/Detection/Identification/ShortenerRedirectOnlyProcessor.php';
 require_once $libraryDir . '/Detection/Identification/HostOnlyProcessor.php';
 require_once $libraryDir . '/Detection/Identification/FullPathProcessor.php';
 require_once $libraryDir . '/Detection/Identification/Typo3ArtefactsProcessor.php';
@@ -43,7 +44,8 @@ class Typo3HostDetectorWorker {
 		$objPathNoRedirect = new \T3census\Detection\Identification\FullPathProcessor($objPathRedirect, FALSE);
 		$objHostRedirect = new \T3census\Detection\Identification\HostOnlyProcessor($objPathNoRedirect, TRUE);
 		$objHostNoRedirect = new \T3census\Detection\Identification\HostOnlyProcessor($objHostRedirect, FALSE);
-		$objHostNoRedirect->process($context);
+		$objShortener = \T3census\Detection\Identification\ShortenerRedirectOnlyProcessor($objHostNoRedirect);
+		$objShortener->process($context);
 		unset($objHostNoRedirect, $objHostNoRedirect, $objHostRedirect, $objPathNoRedirect, $objPathRedirect);
 
 		if (is_bool($context->getIsTypo3Cms()) && $context->getIsTypo3Cms()) {
