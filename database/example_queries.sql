@@ -1,3 +1,8 @@
+-- Show unprocessed tweets
+SELECT COUNT(t.tweet_id)
+FROM twitter_tweet t JOIN twitter_url u ON (t.tweet_id = u.fk_tweet_id)
+WHERE NOT t.tweet_processed;
+
 -- Show stored CIDRs
 SELECT cidr_id,INET_NTOA(cidr_ip),mask_to_cidr(INET_NTOA(cidr_mask)) AS cidr,created,cidr_description FROM cidr;
 
