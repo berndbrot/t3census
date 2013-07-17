@@ -43,6 +43,9 @@ class DomParser {
 		if (strpos($content, 'DOCTYPE')) {
 			$content = preg_replace('/<!DOCTYPE.*>/sU','', $content);
 		}
+		if (strpos($content, 'xml')) {
+			$content = preg_replace('/<!xml.*>/sU','', $content);
+		}
 
 		$this->content = $content;
 
