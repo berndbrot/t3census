@@ -34,7 +34,7 @@ if (is_array($gearmanStatus)) {
 		$date = new DateTime();
 
 		while ($row = $res->fetch_assoc()) {
-			if (isServerLocked($mysqli, intval($row['server_ip']))) {
+			if (isServerLocked($mysqli, intval($row['server_ip'])) || isServerUpdated($mysqli, intval($row['server_ip']))) {
 				continue;
 			} else {
 				$updateQuery = sprintf('UPDATE server SET locked=1 WHERE server_id=%u;',
@@ -125,6 +125,25 @@ function isServerLocked($objMysql, $serverId) {
 	}
 
 	return $isLocked;
+}
+
+function isServerUpdated($objMysql, $serverId) {
+    $isUpdated = TRUE;
+    $selectQuery = sprintf('SELECT 1 FROM server WHERE server_id=%u AND updated IS NOT NULL;',
+        $serverId
+    );
+    $res = $objMysql->query($selectQuery);
+    fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+
+    if (is_object($res = $objMysql->query($selectQuery))) {
+
+        if ($res->num_rows == 1) {
+            $isUpdated = FALSE;
+        }
+        $res->close();
+    }
+
+    return $isUpdated;
 }
 
 function extractUrlsFrom($results) {
