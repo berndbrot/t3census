@@ -12,6 +12,7 @@ require_once $libraryDir . '/Detection/Identification/Typo3ArtefactsProcessor.ph
 require_once $libraryDir . '/Detection/Classification/ExistingRequestsProcessor.php';
 require_once $libraryDir . '/Detection/Classification/HostOnlyProcessor.php';
 require_once $libraryDir . '/Detection/Classification/FullPathProcessor.php';
+require_once $libraryDir . '/Detection/Classification/Typo3ArtefactsProcessor.php';
 require_once $vendorDir . '/autoload.php';
 
 
@@ -49,7 +50,8 @@ class Typo3HostDetectorWorker {
 		unset($objShortener, $objHostNoRedirect, $objHostNoRedirect, $objHostRedirect, $objPathNoRedirect, $objPathRedirect);
 
 		if (is_bool($context->getIsTypo3Cms()) && $context->getIsTypo3Cms()) {
-			$objFullPath = new \T3census\Detection\Classification\FullPathProcessor();
+			$objArtefacts = new \T3census\Detection\Classification\Typo3ArtefactsProcessor();
+			$objFullPath = new \T3census\Detection\Classification\FullPathProcessor($objArtefacts);
 			$objHost = new \T3census\Detection\Classification\HostOnlyProcessor($objFullPath);
 			$objRequest = new \T3census\Detection\Classification\ExistingRequestsProcessor($objHost);
 			$objRequest->process($context);
