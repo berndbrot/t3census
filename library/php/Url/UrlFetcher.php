@@ -24,6 +24,8 @@ class UrlFetcher {
 
 	protected $body = NULL;
 
+	protected $userAgent = 'T3census-Crawler/1.0';
+
 	public function __construct() {
 		$this->reset();
 	}
@@ -49,7 +51,8 @@ class UrlFetcher {
 		curl_setopt($curl, CURLOPT_TIMEOUT, 60);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, $followRedirects);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'T3census-Crawler/1.0');
+		curl_setopt($curl, CURLOPT_USERAGENT, $this->userAgent);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept-Language: en-US,en;q=0.5'));
 
 		if (is_bool($retrieveCookies) && $retrieveCookies) {
 			curl_setopt($curl, CURLOPT_HEADER, 1);
@@ -199,11 +202,26 @@ class UrlFetcher {
 	}
 
 	/**
+	 * @param string $userAgent
+	 */
+	public function setUserAgent($userAgent) {
+		$this->userAgent = $userAgent;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUserAgent() {
+		return $this->userAgent;
+	}
+
+	/**
 	 * @return  UrlFetcher  class instance
 	 */
 	public function reset() {
 		$this->url = $this->responseCookies = $this->responseHttpCode = $this->ipAddress = $this->port = $this->body = NULL;
 		$this->numRedirects = $this->errno = 0;
+		$this->userAgent = 'T3census-Crawler/1.0';
 		return $this;
 	}
 }
