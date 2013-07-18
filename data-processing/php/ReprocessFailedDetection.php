@@ -57,25 +57,32 @@ if (is_object($res)) {
 			$url .= (is_null($row['host_subdomain']) ? '' : $row['host_subdomain'] . '.');
 			$url .= $row['host_domain'];
 			$url .= (is_null($row['host_path']) ? '' : '/' . ltrim($row['host_path'], '/'));
-			fwrite(STDOUT, $url . PHP_EOL);
+			#fwrite(STDOUT, $url . PHP_EOL);
 
 			$detectionResult = json_decode($client->doNormal($gearmanFunction, $url));
 			if (is_object($detectionResult)) {
 
-				if (!is_object($detectionResult) || !property_exists($detectionResult, 'TYPO3version')) {
+				if (!property_exists($detectionResult, 'TYPO3version')) {
 					#print_r($row);
 					fwrite(STDOUT, $url . PHP_EOL);
 					#print_r($detectionResult);
 					break;
 				}
 
-				if (!is_bool($detectionResult->TYPO3version) && is_string($detectionResult->TYPO3version)) {
+				if (property_exists($detectionResult, 'TYPO3') && is_bool($detectionResult->TYPO3) && !$detectionResult->TYPO3) {
+					#print_r($row);
+					fwrite(STDOUT, 'NO TYPO3: ' .$url . PHP_EOL);
+					#print_r($detectionResult);
+					break;
+				}
+
+				if (property_exists($detectionResult, 'TYPO3version') && is_string($detectionResult->TYPO3version)) {
 					#print_r($row);
 					#fwrite(STDOUT, $url . PHP_EOL);
 					#print_r($detectionResult);
 
 					$updateQuery = sprintf('UPDATE host SET typo3_versionstring=%s,host_path=%s,updated=\'%s\' WHERE host_id=%u;',
-						(is_null($detectionResult->TYPO3version) ? NULL : '\'' . mysqli_real_escape_string($mysqli, $detectionResult->TYPO3version) . '\''),
+						(is_null($detectionResult->TYPO3version) ? 'NULL' : '\'' . mysqli_real_escape_string($mysqli, $detectionResult->TYPO3version) . '\''),
 						(is_null($detectionResult->path) ? 'NULL' : '\'' . mysqli_real_escape_string($mysqli, $detectionResult->path) . '\''),
 						$date->format('Y-m-d H:i:s'),
 						$row['host_id']
