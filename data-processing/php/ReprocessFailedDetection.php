@@ -41,12 +41,13 @@ unset($gearmanStatus);
 $isSuccessful = TRUE;
 $selectQuery = 'SELECT * FROM host WHERE typo3_installed=1 AND typo3_versionstring IS NULL;';
 $res = $mysqli->query($selectQuery);
-#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
 
 if (is_object($res)) {
 
 	if ($mysqli->affected_rows > 0) {
 
+		$date = new DateTime();
 		$client= new GearmanClient();
 		$client->addServer($gearmanHost, $gearmanPort);
 
@@ -73,12 +74,13 @@ if (is_object($res)) {
 					#fwrite(STDOUT, $url . PHP_EOL);
 					#print_r($detectionResult);
 
-					$updateQuery = sprintf('UPDATE host SET typo3_versionstring=%s,host_path=%s WHERE host_id=%u;',
+					$updateQuery = sprintf('UPDATE host SET typo3_versionstring=%s,host_path=%s,updated=\'%s\' WHERE host_id=%u;',
 						(is_null($detectionResult->TYPO3version) ? NULL : '\'' . mysqli_real_escape_string($mysqli, $detectionResult->TYPO3version) . '\''),
-						(is_null($detectionResult->path) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql, $detectionResult->path) . '\''),
+						(is_null($detectionResult->path) ? 'NULL' : '\'' . mysqli_real_escape_string($mysqli, $detectionResult->path) . '\''),
+						$date->format('Y-m-d H:i:s'),
 						$row['host_id']
 					);
-					#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
+					fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
 					$updateResult= $mysqli->query($updateQuery);
 					if (!is_bool($updateResult) || !$updateResult) {
 						fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $mysqli->error, $mysqli->errno));
