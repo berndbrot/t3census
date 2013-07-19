@@ -41,11 +41,32 @@ class Typo3ArtefactsProcessor extends \T3census\Detection\AbstractProcessor impl
 		$objUrl = \Purl\Url::parse($context->getUrl());
 
 		$urlHostOnly = $objUrl->get('scheme') . '://' . $objUrl->get('host');
+		$urlFullPath = $objUrl->get('scheme') . '://' . $objUrl->get('host');
+		$path = $objUrl->path->getData();
+		$path = array_reverse($path);
+		$pathString = '';
+		$i=0;
+		foreach ($path as $pathSegment) {
+			if (!empty($pathSegment)) {
+				if ($i === 0) {
+					if (!is_int(strpos($pathSegment, '.'))) {
+						$pathString =  $pathSegment . '/' . $pathString . '/';
+					} else {
+						#$pathString =  '/' . $pathString ;
+					}
+				} else {
+					$pathString =  '/' . $pathSegment . $pathString;
+				}
+			}
+			$i++;
+		}
+		$urlFullPath .= $pathString;
+
 		$objRequest->setRequestUrl($urlHostOnly)->setResponseUrl($urlHostOnly);
 
 
-		$fetcherHttpCodeFileadmin = $fetcherHttpCodeUploads = NULL;
-		$fetcherErrnoFileadmin = $fetcherErrnoUploads = 0;
+		$fetcherHttpCodeFileadmin = $fetcherHttpCodeSysext = $fetcherHttpCodeRandom = NULL;
+		$fetcherErrnoFileadmin = $fetcherErrnoSysext = $fetcherErrnoRandom = 0;
 
 		$objFileadminUrl = new \Purl\Url($urlHostOnly);
 		$objFileadminUrl->path = 'fileadmin/';
@@ -54,51 +75,60 @@ class Typo3ArtefactsProcessor extends \T3census\Detection\AbstractProcessor impl
 		$fetcherHttpCodeFileadmin = $objFetcher->getResponseHttpCode();
 		$fetcherErrnoFileadmin = $objFetcher->getErrno();
 
-		$objUploadsUrl = new \Purl\Url($urlHostOnly);
-		$objUploadsUrl->path = 'uploads/';
-		$uploadsUrl = $objUploadsUrl->getUrl();
-		$objFetcher->reset()->setUrl($uploadsUrl)->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, FALSE, FALSE);
-		$fetcherHttpCodeUploads = $objFetcher->getResponseHttpCode();
-		$fetcherErrnoUploads = $objFetcher->getErrno();
+		$objSysextUrl = new \Purl\Url($urlHostOnly);
+		$objSysextUrl->path = 'typo3/sysext/';
+		$sysextUrl = $objSysextUrl->getUrl();
+		$objFetcher->reset()->setUrl($sysextUrl)->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, FALSE, FALSE);
+		$fetcherHttpCodeSysext = $objFetcher->getResponseHttpCode();
+		$fetcherErrnoSysext = $objFetcher->getErrno();
 
-		if ($fetcherErrnoFileadmin === 0 && $fetcherErrnoUploads === 0
-				&& $fetcherHttpCodeFileadmin === 403 && $fetcherHttpCodeUploads === 403) {
+		$objRandomUrl = new \Purl\Url($urlHostOnly);
+		$objRandomUrl->path = md5(time()) . '/';
+		$randomUrl = $objRandomUrl->getUrl();
+		$objFetcher->reset()->setUrl($randomUrl)->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, FALSE, FALSE);
+		$fetcherHttpCodeRandom = $objFetcher->getResponseHttpCode();
+		$fetcherErrnoRandom = $objFetcher->getErrno();
+
+		if ($fetcherErrnoFileadmin === 0 && $fetcherErrnoSysext === 0 && $fetcherErrnoRandom === 0
+				&& $fetcherHttpCodeFileadmin === 403 && $fetcherHttpCodeSysext === 403 && $fetcherHttpCodeRandom !== 403) {
 			if (is_null($context->getIp()))  $context->setIp($objFetcher->getIpAddress());
 			if (is_null($context->getPort()))  $context->setPort($objFetcher->getPort());
 			$context->setUrl($urlHostOnly);
 			$context->setIsTypo3Cms(TRUE);
 			$isIdentificationSuccessful = TRUE;
 		} else {
-
-			$urlFullPath = $objUrl->get('scheme') . '://' . $objUrl->get('host');
-			$path = $objUrl->get('path')->getPath();
-			$urlFullPath .= (is_string($path) && strlen($path) > 0 && 0 !== strcmp('/', $path) ? $path  : '');
-
-			if (TRUE || 0 !== strcmp($urlHostOnly, $urlFullPath)) {
+			if (0 !== strcmp($urlHostOnly, $urlFullPath)) {
 				$objRequest->setRequestUrl($urlFullPath)->setResponseUrl($urlFullPath);
 
-				$fetcherHttpCodeFileadmin = $fetcherHttpCodeUploads = NULL;
-				$fetcherErrnoFileadmin = $fetcherErrnoUploads = 0;
+				$fetcherHttpCodeFileadmin = $fetcherHttpCodeSysext = NULL;
+				$fetcherErrnoFileadmin = $fetcherErrnoSysext = 0;
 
 				$objFileadminUrl = new \Purl\Url($urlFullPath);
-				$objFileadminUrl->path = 'fileadmin/';
+				$objFileadminUrl->path->add('fileadmin/');
 				$fileadminUrl = $objFileadminUrl->getUrl();
 				$objFetcher->setUrl($fileadminUrl)->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, FALSE, FALSE);
 				$fetcherHttpCodeFileadmin = $objFetcher->getResponseHttpCode();
 				$fetcherErrnoFileadmin = $objFetcher->getErrno();
 
-				$objUploadsUrl = new \Purl\Url($urlFullPath);
-				$objUploadsUrl->path = 'uploads/';
-				$uploadsUrl = $objUploadsUrl->getUrl();
-				$objFetcher->reset()->setUrl($uploadsUrl)->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, FALSE, FALSE);
-				$fetcherHttpCodeUploads = $objFetcher->getResponseHttpCode();
-				$fetcherErrnoUploads = $objFetcher->getErrno();
+				$objSysextUrl = new \Purl\Url($urlFullPath);
+				$objSysextUrl->path->add('typo3/sysext/');
+				$sysextUrl = $objSysextUrl->getUrl();
+				$objFetcher->reset()->setUrl($sysextUrl)->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, FALSE, FALSE);
+				$fetcherHttpCodeSysext = $objFetcher->getResponseHttpCode();
+				$fetcherErrnoSysext = $objFetcher->getErrno();
 
-				if ($fetcherErrnoFileadmin === 0 && $fetcherErrnoUploads === 0
-						&& $fetcherHttpCodeFileadmin === 403 && $fetcherHttpCodeUploads === 403) {
+				$objRandomUrl = new \Purl\Url($urlFullPath);
+				$objRandomUrl->path->add(md5(time()) . '/');
+				$randomUrl = $objRandomUrl->getUrl();
+				$objFetcher->reset()->setUrl($randomUrl)->fetchUrl(\T3census\Url\UrlFetcher::HTTP_GET, FALSE, FALSE);
+				$fetcherHttpCodeRandom = $objFetcher->getResponseHttpCode();
+				$fetcherErrnoRandom = $objFetcher->getErrno();
+
+				if ($fetcherErrnoFileadmin === 0 && $fetcherErrnoSysext === 0 && $fetcherErrnoRandom === 0
+						&& $fetcherHttpCodeFileadmin === 403 && $fetcherHttpCodeSysext === 403 && $fetcherHttpCodeRandom !== 403) {
 					if (is_null($context->getIp()))  $context->setIp($objFetcher->getIpAddress());
 					if (is_null($context->getPort()))  $context->setPort($objFetcher->getPort());
-					$context->setUrl($urlHostOnly);
+					$context->setUrl($urlFullPath);
 					$context->setIsTypo3Cms(TRUE);
 					$isIdentificationSuccessful = TRUE;
 				}
@@ -107,7 +137,7 @@ class Typo3ArtefactsProcessor extends \T3census\Detection\AbstractProcessor impl
 		}
 		$context->addRequest($objRequest);
 
-		unset($urlHostOnly, $objFileadminUrl, $objUploadsUrl, $objUrl, $objFetcher, $objRequest);
+		unset($urlHostOnly, $objFileadminUrl, $objSysextUrl, $objUrl, $objFetcher, $objRequest);
 
 		if (!is_null($this->successor) && !$isIdentificationSuccessful) {
 			$this->successor->process($context);
