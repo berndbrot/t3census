@@ -2,35 +2,34 @@ mysql> SELECT count(host_id),typo3_versionstring FROM host WHERE typo3_installed
 +----------------+---------------------+
 | count(host_id) | typo3_versionstring |
 +----------------+---------------------+
-|            274 | NULL                |
+|            524 | NULL                |
 |              1 | TYPO3  CMS          |
 |              2 | TYPO3 - CMS         |
 |             21 | TYPO3 3.6 CMS       |
 |             86 | TYPO3 3.7 CMS       |
-|            261 | TYPO3 3.8 CMS       |
-|            434 | TYPO3 4.0 CMS       |
-|           1370 | TYPO3 4.1 CMS       |
-|           3238 | TYPO3 4.2 CMS       |
-|           1473 | TYPO3 4.3 CMS       |
-|           2599 | TYPO3 4.4 CMS       |
-|          15263 | TYPO3 4.5 CMS       |
-|           1556 | TYPO3 4.6 CMS       |
-|           3050 | TYPO3 4.7 CMS       |
-|              1 | TYPO3 5.0 CMS       |
-|            401 | TYPO3 6.0 CMS       |
-|            162 | TYPO3 6.1 CMS       |
+|            266 | TYPO3 3.8 CMS       |
+|            447 | TYPO3 4.0 CMS       |
+|           1383 | TYPO3 4.1 CMS       |
+|           3305 | TYPO3 4.2 CMS       |
+|           1506 | TYPO3 4.3 CMS       |
+|           2672 | TYPO3 4.4 CMS       |
+|          15490 | TYPO3 4.5 CMS       |
+|           1584 | TYPO3 4.6 CMS       |
+|           3133 | TYPO3 4.7 CMS       |
+|            412 | TYPO3 6.0 CMS       |
+|            166 | TYPO3 6.1 CMS       |
 |              1 | TYPO3 6.2 CMS       |
 +----------------+---------------------+
-18 rows in set (0.19 sec)
+17 rows in set (0.17 sec)
 
 
 mysql> SELECT COUNT(host_id) FROM host WHERE typo3_installed;
 +----------------+
 | COUNT(host_id) |
 +----------------+
-|          30193 |
+|          30999 |
 +----------------+
-1 row in set (0.09 sec)
+1 row in set (0.01 sec)
 
 
 mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_suffix ORDER BY num_hosts DESC;
@@ -245,26 +244,26 @@ mysql> SELECT COUNT(DISTINCT host_domain) FROM host WHERE typo3_installed;
 +-----------------------------+
 | COUNT(DISTINCT host_domain) |
 +-----------------------------+
-|                       23337 |
+|                       23983 |
 +-----------------------------+
-1 row in set (0.17 sec)
+1 row in set (0.15 sec)
 
 
 mysql> SELECT host_domain,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_domain HAVING num_hosts > 100 ORDER BY num_hosts DESC;
 +------------------+-----------+
 | host_domain      | num_hosts |
 +------------------+-----------+
-| univie.ac.at     |       347 |
+| univie.ac.at     |       348 |
 | tum.de           |       226 |
 | tu-berlin.de     |       202 |
-| typo3server.info |       200 |
+| typo3server.info |       201 |
 | uni-wuppertal.de |       148 |
 | charite.de       |       147 |
+| typo3.org        |       135 |
 | apotheke.ch      |       119 |
 | au.dk            |       111 |
 | uni-koeln.de     |       109 |
 | uni-hannover.de  |       103 |
-| typo3.org        |       101 |
 | drs.de           |       101 |
 +------------------+-----------+
 12 rows in set (0.34 sec)
