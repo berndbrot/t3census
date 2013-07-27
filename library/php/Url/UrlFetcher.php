@@ -48,7 +48,7 @@ class UrlFetcher {
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $this->url);
 		curl_setopt($curl, CURLOPT_POST, FALSE);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 20);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, $followRedirects);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($curl, CURLOPT_USERAGENT, $this->userAgent);
