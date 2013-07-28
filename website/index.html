@@ -20,11 +20,64 @@
 <a href="http://www.metagenerator.info/generator-details.html?ggid=4" title="">metagenerator.info</a> claims to have found 41,785 installations.</p>
 <p>This is a project to have reliable and provable data. And with some background-knowledge in TYPO3, identification should be done better than just examining meta tags.</p>
 <h2>statistics</h2>
+<table border="1" rules="all">
+	<thead>
+	<tr>
+		<th>TYPO3 CMS version</th>
+		<th>number of installations</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>TYPO3 3.6 CMS</td>
+		<td>42</td>
+	</tr><tr>
+		<td>TYPO3 3.7 CMS</td>
+		<td>141</td>
+	</tr><tr>
+		<td>TYPO3 3.8 CMS</td>
+		<td>367</td>
+	</tr><tr>
+		<td>TYPO3 4.0 CMS</td>
+		<td>611</td>
+	</tr><tr>
+		<td>TYPO3 4.1 CMS</td>
+		<td>1927</td>
+	</tr><tr>
+		<td>TYPO3 4.2 CMS</td>
+		<td>4609</td>
+	</tr><tr>
+		<td>TYPO3 4.3 CMS</td>
+		<td>2096</td>
+	</tr><tr>
+		<td>TYPO3 4.4 CMS</td>
+		<td>3876</td>
+	</tr><tr>
+		<td>TYPO3 4.5 CMS</td>
+		<td>21051</td>
+	</tr><tr>
+		<td>TYPO3 4.6 CMS</td>
+		<td>2346</td>
+	</tr><tr>
+		<td>TYPO3 4.7 CMS</td>
+		<td>4403</td>
+	</tr><tr>
+		<td>TYPO3 6.0 CMS</td>
+		<td>605</td>
+	</tr><tr>
+		<td>TYPO3 6.1 CMS</td>
+		<td>250</td>
+	</tr><tr>
+		<td>TYPO3 6.2 CMS</td>
+		<td>1</td>
+	</tr>
+	</tbody>
+</table>
 <p>
 	<img src="https://docs.google.com/spreadsheet/oimg?key=0Artbs8oS4Ip4dFZQbGRLb1NSLUtaNVNhLW94MllRbEE&oid=2&zx=sht9nc5yjo76">
 	<img src="https://docs.google.com/spreadsheet/oimg?key=0Artbs8oS4Ip4dFZQbGRLb1NSLUtaNVNhLW94MllRbEE&oid=4&zx=z4p5wjg7na7l">
 	<img src="https://docs.google.com/spreadsheet/oimg?key=0Artbs8oS4Ip4dFZQbGRLb1NSLUtaNVNhLW94MllRbEE&oid=8&zx=az5w6wnxznmt">
-	<img src="https://docs.google.com/spreadsheet/oimg?key=0Artbs8oS4Ip4dFZQbGRLb1NSLUtaNVNhLW94MllRbEE&oid=6&zx=obnmbqn30w4s">
+	<img src="https://docs.google.com/spreadsheet/oimg?key=0Artbs8oS4Ip4dFZQbGRLb1NSLUtaNVNhLW94MllRbEE&oid=6&zx=7gmb027deyws">
 </p>
 <h2>data usage</h2>
 <p>Whenever using the here presented data, please mention the project ("T3census") and provide a link to this website. Thank you!</p>
@@ -33,13 +86,17 @@
 <p>For a start, twitter API has been used to extract URLs amongst keyword TYPO3. Furthermore Bing API has been used with a search for TYPO3 artefacts. With the discovered hosts,
 <a href="http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing">CIDRs</a> have been retrieved and are being crawled right now. </p>
 <h2>infrastructure and technique</h2>
-<p>TBD</p>
+<p>A central jobserver is used to delegate working units. Clients are connecting to this server asking to process working units (IP lookup, Host identification). Workers are processing the
+units and are returning results.</p>
+<p>Analyzing a host is done in two steps. First, a chain of identification processors decides whether a TYPO3 CMS installation has been found.
+When successful, a chain of classification processors tries to find out the TYPO3 version in use.</p>
+<p>Identification is done by examining DOM, response cookies and existance of file resources.</p>
 <h2>history</h2>
 <ul type="disc">
 	<li>Jul 27, 2013 - identified ~36,000 TYPO3 CMS installations ("oldest" datasample: Jul 17, 2013")</li>
 	<li>Jul 13, 2013 - t3census.info domain registration</li>
 	<li>May 30, 2013 - initial commit to github repository</li>
-	<li>May 26, 2013 - published initial stats - 110 TYPO3 CMS installations</li>
+	<li>May 26, 2013 - published initial stats: 110 identified TYPO3 CMS installations</li>
 	<li>May 21, 2013 - initial code contribution to private repository</li>
 </ul>
 <h2>roadmap</h2>
