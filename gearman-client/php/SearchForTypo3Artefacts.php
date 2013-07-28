@@ -25,14 +25,16 @@ if (is_array($gearmanStatus)) {
 	try {
 		$objLookup = new T3census\Bing\Api\ReverseIpLookup();
 		$objLookup->setAccountKey('')->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
-		#$results = $bingApi->setQuery('fileadmin/user_upload')->setOffset(1500)->setMaxResults(2000)->getResults();
-		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(100)->getResults();
+		#$results = $objLookup->setQuery('fileadmin/user_upload')->setOffset(0)->setMaxResults(500)->getResults();
+		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(500)->getResults();
+		$results = $objLookup->setQuery('instreamset:(url):tx_ttnews')->setOffset(0)->setMaxResults(500)->getResults();
 		unset($objLookup);
 	} catch (\T3census\Bing\Api\Exception\ApiConsumeException $e) {
 		$objLookup = new \T3census\Bing\Scraper\ReverseIpLookup();
 		$objLookup->setEndpoint('http://www.bing.com/search');
-		#$results = $bingApi->setQuery('fileadmin/user_upload')->setOffset(1500)->setMaxResults(2000)->getResults();
-		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(1500)->getResults(2000);
+		#$results = $objLookup->setQuery('fileadmin/user_upload')->setOffset(0)->setMaxResults(500)->getResults();
+		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(500)->getResults();
+		$results = $objLookup->setQuery('instreamset:(url):tx_ttnews')->setOffset(0)->setMaxResults(500)->getResults();
 		unset($objLookup);
 	}
 
@@ -164,36 +166,57 @@ function persistServerPortMapping($mysqli, $serverId, $portId) {
 	}
 }
 
-function persistHost($mysqli, $serverId, $host) {
-	#echo("SELECT host_id FROM host WHERE fk_server_id = " . intval($serverId) . " AND host_name = '" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "';");
-	if ($result = $mysqli->query("SELECT host_id FROM host WHERE fk_server_id = " . intval($serverId) . " AND host_name = '" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "';" )) {
+function persistHost($objMysql, $serverId, $host) {
+	$selectQuery = sprintf('SELECT host_id FROM host WHERE fk_server_id=%u AND host_subdomain LIKE %s AND host_domain LIKE \'%s\' LIMIT 1',
+		$serverId,
+		(is_null($host->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql, $host->subdomain) . '\''),
+		$host->registerableDomain
+	);
+	#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+	$selectRes = $objMysql->query($selectQuery);
 
+	if (is_object($selectRes)) {
 		$date = new DateTime();
-		if ($result->num_rows == 0) {
-			$foo1 = $mysqli->query("INSERT INTO host(host_name,host_domain,fk_server_id,typo3_installed,host_path,typo3_versionstring,created) "
-			. "VALUES ('" . mysqli_real_escape_string($mysqli, $host->protocol . $host->host) . "',"
-			. "'" . mysqli_real_escape_string($mysqli, $host->host) . "',"
-			. $serverId . ","
-			. ($host->TYPO3 ? 1 : 0) . ","
-			. "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
-			. ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
-			. "'" . $date->format('Y-m-d H:i:s') . "');");
-			if (!$foo1)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
-		} else {
-			$row = $result->fetch_assoc();
-			$hostId = intval($row['host_id']);
-			$foo2 = $mysqli->query("UPDATE host SET "
-			. "typo3_installed=" . ($host->TYPO3 ? 1 : 0) . ","
-			. "typo3_versionstring=" . ($host->TYPO3 && !empty($host->TYPO3version) ? "'" . mysqli_real_escape_string($mysqli, $host->TYPO3version)  . "'" : 'NULL') . ","
-			. "host_path=" . "'" . mysqli_real_escape_string($mysqli, $host->path) . "',"
-			. "created=" . "'" . $date->format('Y-m-d H:i:s') . "'"
-			. " WHERE created IS NULL AND host_id=" .$hostId);
-			if (!$foo2)  echo "error-4: (" . $mysqli->errno . ") " . $mysqli->error;
-			echo (PHP_EOL . 'UPDATE');
-		}
 
-		/* free result set */
-		$result->close();
+		if ($selectRes->num_rows == 0) {
+			$insertQuery = sprintf('INSERT INTO host(typo3_installed,typo3_versionstring,host_name,host_scheme,host_subdomain,host_domain,host_suffix,host_path,created,fk_server_id) ' .
+				'VALUES(%u,%s,NULL,\'%s\',%s,\'%s\',%s,%s,\'%s\',%u);',
+				($host->TYPO3 ? 1 : 0),
+				($host->TYPO3 && !empty($host->TYPO3version) ? '\'' . mysqli_real_escape_string($objMysql, $host->TYPO3version)  . '\'' : 'NULL'),
+				mysqli_real_escape_string($objMysql, $host->scheme),
+				(is_null($host->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->subdomain) . '\''),
+				$host->registerableDomain,
+				(is_null($host->publicSuffix) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->publicSuffix) . '\''),
+				(is_null($host->path) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->path) . '\''),
+				$date->format('Y-m-d H:i:s'),
+				$serverId
+			);
+			$insertResult = $objMysql->query($insertQuery);
+			#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $insertQuery));
+			if (!is_bool($insertResult) || !$insertResult) {
+				fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $objMysql->error, $objMysql->errno));
+			}
+		} else {
+			$row = $selectRes->fetch_assoc();
+
+			$updateQuery = sprintf('UPDATE host SET typo3_installed=%u,typo3_versionstring=%s,host_name=NULL,host_scheme=\'%s\',host_subdomain=%s,host_domain=\'%s\',host_suffix=%s,host_path=%s,created=\'%s\' WHERE created IS NULL AND host_id=%u',
+				($host->TYPO3 ? 1 : 0),
+				($host->TYPO3 && !empty($host->TYPO3version) ? '\'' . mysqli_real_escape_string($objMysql, $host->TYPO3version)  . '\'' : 'NULL'),
+				mysqli_real_escape_string($objMysql, $host->scheme),
+				(is_null($host->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->subdomain) . '\''),
+				$host->registerableDomain,
+				(is_null($host->publicSuffix) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->publicSuffix) . '\''),
+				(is_null($host->path) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql,$host->path) . '\''),
+				$date->format('Y-m-d H:i:s'),
+				$row['host_id']
+			);
+			$updateResult= $objMysql->query($updateQuery);
+			#fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $updateQuery));
+			if (!is_bool($updateResult) || !$updateResult) {
+				fwrite(STDERR, sprintf('ERROR: %s (Errno: %u)' . PHP_EOL, $objMysql->error, $objMysql->errno));
+			}
+		}
+		$selectRes->close();
 	}
 }
 ?>
