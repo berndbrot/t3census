@@ -263,13 +263,13 @@ function persistServerPortMapping($mysqli, $serverId, $portId) {
 }
 
 function persistHost($objMysql, $serverId, $host) {
-	$selectQuery = sprintf('SELECT 1 FROM host WHERE fk_server_id=%u AND host_subdomain LIKE %s AND host_domain LIKE \'%s\' LIMIT 1',
+	$selectQuery = sprintf('SELECT host_id FROM host WHERE fk_server_id=%u AND host_subdomain LIKE %s AND host_domain LIKE \'%s\' LIMIT 1',
 		$serverId,
 		(is_null($host->subdomain) ? 'NULL' : '\'' . mysqli_real_escape_string($objMysql, $host->subdomain) . '\''),
 		$host->registerableDomain
 	);
-	$selectRes = $objMysql->query($selectQuery);
 	fwrite(STDOUT, sprintf('DEBUG: Query: %s' . PHP_EOL, $selectQuery));
+	$selectRes = $objMysql->query($selectQuery);
 
 	if (is_object($selectRes)) {
 		$date = new DateTime();
@@ -295,7 +295,7 @@ function persistHost($objMysql, $serverId, $host) {
 		} else {
 			$row = $selectRes->fetch_assoc();
 
-			$updateQuery = sprintf('UPDATE host SET typo3_installed=%u,typo3_versionstring=%s,host_name=NULL,host_scheme=\'%s\',host_subdomain=%s,host_domain=\'%s\',host_suffix=%s,host_path=%s,created=%s WHERE created IS NULL AND host_id=%u',
+			$updateQuery = sprintf('UPDATE host SET typo3_installed=%u,typo3_versionstring=%s,host_name=NULL,host_scheme=\'%s\',host_subdomain=%s,host_domain=\'%s\',host_suffix=%s,host_path=%s,created=\'%s\' WHERE created IS NULL AND host_id=%u',
 				($host->TYPO3 ? 1 : 0),
 				($host->TYPO3 && !empty($host->TYPO3version) ? '\'' . mysqli_real_escape_string($objMysql, $host->TYPO3version)  . '\'' : 'NULL'),
 				mysqli_real_escape_string($objMysql, $host->scheme),
