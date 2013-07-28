@@ -27,14 +27,16 @@ if (is_array($gearmanStatus)) {
 		$objLookup->setAccountKey('')->setEndpoint('https://api.datamarket.azure.com/Bing/Search');
 		#$results = $objLookup->setQuery('fileadmin/user_upload')->setOffset(0)->setMaxResults(500)->getResults();
 		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(500)->getResults();
-		$results = $objLookup->setQuery('instreamset:(url):tx_ttnews')->setOffset(0)->setMaxResults(500)->getResults();
+		#$results = $objLookup->setQuery('no_cache')->setOffset(0)->setMaxResults(1500)->getResults();
+		$results = $objLookup->setQuery('instreamset:(url):tx_drwiki')->setOffset(0)->setMaxResults(1500)->getResults();
 		unset($objLookup);
 	} catch (\T3census\Bing\Api\Exception\ApiConsumeException $e) {
 		$objLookup = new \T3census\Bing\Scraper\ReverseIpLookup();
 		$objLookup->setEndpoint('http://www.bing.com/search');
 		#$results = $objLookup->setQuery('fileadmin/user_upload')->setOffset(0)->setMaxResults(500)->getResults();
 		#$results = $objLookup->setQuery('showuid')->setOffset(0)->setMaxResults(500)->getResults();
-		$results = $objLookup->setQuery('instreamset:(url):tx_ttnews')->setOffset(0)->setMaxResults(500)->getResults();
+		#$results = $objLookup->setQuery('no_cache')->setOffset(0)->setMaxResults(1500)->getResults();
+		$results = $objLookup->setQuery('instreamset:(url):tx_drwiki')->setOffset(0)->setMaxResults(1500)->getResults();
 		unset($objLookup);
 	}
 
