@@ -2,211 +2,235 @@ mysql> SELECT count(host_id),typo3_versionstring FROM host WHERE typo3_installed
 +----------------+---------------------+
 | count(host_id) | typo3_versionstring |
 +----------------+---------------------+
-|            812 | NULL                |
-|              3 | TYPO3  CMS          |
-|              2 | TYPO3 - CMS         |
-|             27 | TYPO3 3.6 CMS       |
-|            111 | TYPO3 3.7 CMS       |
-|            307 | TYPO3 3.8 CMS       |
-|            511 | TYPO3 4.0 CMS       |
-|           1610 | TYPO3 4.1 CMS       |
-|           3788 | TYPO3 4.2 CMS       |
-|           1713 | TYPO3 4.3 CMS       |
-|           3123 | TYPO3 4.4 CMS       |
-|          17702 | TYPO3 4.5 CMS       |
-|           1973 | TYPO3 4.6 CMS       |
-|           3688 | TYPO3 4.7 CMS       |
-|            533 | TYPO3 6.0 CMS       |
-|            204 | TYPO3 6.1 CMS       |
+|            871 | NULL                |
+|             42 | TYPO3 3.6 CMS       |
+|            141 | TYPO3 3.7 CMS       |
+|            367 | TYPO3 3.8 CMS       |
+|            611 | TYPO3 4.0 CMS       |
+|           1927 | TYPO3 4.1 CMS       |
+|           4609 | TYPO3 4.2 CMS       |
+|           2096 | TYPO3 4.3 CMS       |
+|           3876 | TYPO3 4.4 CMS       |
+|          21051 | TYPO3 4.5 CMS       |
+|           2346 | TYPO3 4.6 CMS       |
+|           4403 | TYPO3 4.7 CMS       |
+|            605 | TYPO3 6.0 CMS       |
+|            250 | TYPO3 6.1 CMS       |
 |              1 | TYPO3 6.2 CMS       |
 +----------------+---------------------+
-17 rows in set (0.26 sec)
+15 rows in set (0.92 sec)
 
 
 mysql> SELECT COUNT(host_id) FROM host WHERE typo3_installed;
 +----------------+
 | COUNT(host_id) |
 +----------------+
-|          36108 |
+|          43196 |
 +----------------+
-1 row in set (0.12 sec)
+1 row in set (0.56 sec)
 
 
 mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_suffix ORDER BY num_hosts DESC;
 +----------------+-----------+
 | publicSuffix   | num_hosts |
 +----------------+-----------+
-| de             |     16821 |
-| com            |      5681 |
-| ch             |      2428 |
-| at             |      1916 |
-| org            |      1423 |
-| dk             |      1048 |
-| net            |       782 |
-| info           |       643 |
-| eu             |       637 |
-| fr             |       557 |
-| nl             |       546 |
-| ac.at          |       405 |
-| it             |       323 |
-| be             |       223 |
-| si             |       207 |
-| ca             |       187 |
-| com.au         |       158 |
-| se             |       134 |
-| co.uk          |       125 |
-| biz            |        99 |
-| pl             |        86 |
-| cz             |        83 |
-| ie             |        78 |
+| de             |     21380 |
+| com            |      6554 |
+| ch             |      2779 |
+| at             |      2244 |
+| org            |      1578 |
+| dk             |      1059 |
+| net            |       881 |
+| info           |       724 |
+| eu             |       720 |
+| fr             |       612 |
+| nl             |       597 |
+| ac.at          |       409 |
+| it             |       364 |
+| be             |       244 |
+| si             |       238 |
+| ca             |       192 |
+| com.au         |       162 |
+| co.uk          |       152 |
+| se             |       147 |
+| biz            |       107 |
+| cz             |       102 |
+| pl             |       101 |
+| es             |        90 |
+| edu            |        86 |
+| ie             |        85 |
 | edu.tr         |        77 |
-| es             |        76 |
-| co.nz          |        72 |
-| ru             |        63 |
-| fi             |        62 |
-| cc             |        52 |
-| no             |        43 |
-| sk             |        43 |
-| co.at          |        40 |
-| edu            |        37 |
-| hu             |        34 |
-| org.au         |        30 |
+| co.nz          |        73 |
+| ru             |        73 |
+| fi             |        70 |
+| cc             |        64 |
+| hu             |        54 |
+| no             |        46 |
+| sk             |        45 |
+| co.at          |        44 |
+| org.au         |        31 |
+| lu             |        30 |
+| gov.rw         |        30 |
 | org.uk         |        29 |
 | ac.fj          |        27 |
-| gov.rw         |        27 |
-| ee             |        26 |
-| ag             |        26 |
-| lu             |        23 |
-| us             |        22 |
-| cn             |        22 |
+| tv             |        27 |
+| ee             |        27 |
+| ag             |        27 |
+| qc.ca          |        25 |
+| de.com         |        24 |
+| us             |        24 |
+| com.br         |        24 |
+| cn             |        23 |
+| ro             |        22 |
 | org.nz         |        21 |
-| qc.ca          |        21 |
-| tv             |        19 |
-| ro             |        19 |
-| com.tr         |        16 |
-| de.com         |        16 |
-| gv.at          |        15 |
-| com.br         |        14 |
-| co.za          |        14 |
+| hr             |        19 |
+| co.za          |        18 |
+| com.tr         |        17 |
+| gv.at          |        16 |
+| www.ro         |        15 |
+| pt             |        13 |
+| net.au         |        13 |
 | in             |        13 |
+| com.cn         |        13 |
 | mobi           |        13 |
-| pt             |        12 |
-| lt             |        12 |
-| net.au         |        11 |
-| gr             |        11 |
-| nu             |        11 |
-| dz             |        11 |
-| asia           |        11 |
+| lt             |        13 |
+| gr             |        12 |
+| li             |        12 |
 | com.na         |        11 |
-| uk.com         |        10 |
-| com.cn         |        10 |
+| lv             |        11 |
+| or.at          |        11 |
+| uk.com         |        11 |
+| nu             |        11 |
+| asia           |        11 |
+| dz             |        11 |
+| com.pl         |        10 |
 | ac.uk          |        10 |
-| li             |        10 |
-| hr             |        10 |
-| lv             |        10 |
-| or.at          |        10 |
-| com.pl         |         9 |
+| bg             |         9 |
 | am             |         9 |
-| bg             |         8 |
+| co.jp          |         8 |
 | ae             |         8 |
 | jp             |         7 |
+| us.com         |         7 |
+| cn.com         |         7 |
 | by             |         6 |
-| www.ro         |         6 |
 | mx             |         6 |
-| us.com         |         6 |
 | com.de         |         6 |
 | io             |         6 |
 | br.com         |         6 |
-| cn.com         |         6 |
-| ru.com         |         5 |
+| com.ar         |         5 |
+| com.mx         |         5 |
+| aero           |         5 |
 | co             |         5 |
-| co.jp          |         5 |
+| ru.com         |         5 |
+| gov            |         5 |
 | to             |         5 |
 | me             |         5 |
 | co.kr          |         5 |
-| gov.pl         |         4 |
-| com.ua         |         4 |
-| gov            |         4 |
-| com.sg         |         4 |
-| ws             |         4 |
-| sk.ca          |         4 |
-| pe             |         4 |
-| sg             |         4 |
-| com.ar         |         4 |
+| sg             |         5 |
 | travel         |         4 |
 | com.ph         |         4 |
+| gov.pl         |         4 |
+| hu.com         |         4 |
+| cl             |         4 |
+| com.ua         |         4 |
+| com.sg         |         4 |
+| eu.com         |         4 |
+| ws             |         4 |
+| fo             |         4 |
+| sk.ca          |         4 |
+| pe             |         4 |
+| rw             |         3 |
+| gouv.fr        |         3 |
 | za.com         |         3 |
-| int            |         3 |
 | gr.com         |         3 |
+| int            |         3 |
 | edu.pl         |         3 |
-| hu.com         |         3 |
-| cl             |         3 |
 | co.id          |         3 |
 | ba             |         3 |
 | bc.ca          |         3 |
-| eu.com         |         3 |
+| asn.au         |         3 |
+| rs             |         3 |
+| sh             |         3 |
 | go.th          |         3 |
 | org.co         |         3 |
-| fo             |         3 |
 | org.na         |         3 |
 | pro            |         3 |
-| kr             |         3 |
 | name           |         3 |
-| rw             |         3 |
-| com.mx         |         3 |
-| aero           |         3 |
-| gouv.fr        |         3 |
+| cat            |         3 |
+| kr             |         3 |
+| gl             |         2 |
+| kr.com         |         2 |
+| md             |         2 |
+| gov.af         |         2 |
+| ra.it          |         2 |
 | se.com         |         2 |
 | nhs.uk         |         2 |
+| com.my         |         2 |
 | co.in          |         2 |
 | fm             |         2 |
+| coop           |         2 |
 | prd.fr         |         2 |
-| asn.au         |         2 |
 | com.ec         |         2 |
-| is             |         2 |
 | info.tr        |         2 |
-| rs             |         2 |
+| gov.ar         |         2 |
+| is             |         2 |
 | my             |         2 |
 | firenze.it     |         2 |
-| NULL           |         2 |
+| museum         |         2 |
 | tn.it          |         2 |
 | tw             |         2 |
+| NULL           |         2 |
+| gov.uk         |         2 |
 | ac.in          |         2 |
 | com.ru         |         2 |
-| kr.com         |         2 |
-| gl             |         2 |
-| gov.af         |         2 |
-| md             |         2 |
-| ra.it          |         2 |
-| govt.nz        |         1 |
+| ae.org         |         1 |
+| tm.se          |         1 |
+| com.hr         |         1 |
+| se.net         |         1 |
+| vu             |         1 |
+| org.fj         |         1 |
+| co.bw          |         1 |
+| org.in         |         1 |
+| hn             |         1 |
+| genova.it      |         1 |
+| com.ve         |         1 |
+| ar.com         |         1 |
+| com.gt         |         1 |
+| gs             |         1 |
+| vg             |         1 |
+| st             |         1 |
+| net.nz         |         1 |
 | us.org         |         1 |
 | hk             |         1 |
-| ud.it          |         1 |
-| grosseto.it    |         1 |
+| info.at        |         1 |
+| govt.nz        |         1 |
 | ua             |         1 |
 | presse.fr      |         1 |
 | com.zm         |         1 |
 | as             |         1 |
-| com.dz         |         1 |
+| ud.it          |         1 |
+| grosseto.it    |         1 |
 | com.bd         |         1 |
-| com.my         |         1 |
 | ir             |         1 |
+| katowice.pl    |         1 |
 | kz             |         1 |
+| com.dz         |         1 |
 | za.org         |         1 |
 | tt             |         1 |
 | pk             |         1 |
-| co.ke          |         1 |
-| salerno.it     |         1 |
+| gov.it         |         1 |
 | ac             |         1 |
-| coop           |         1 |
 | ly             |         1 |
 | fhs.no         |         1 |
 | uz             |         1 |
-| com.kh         |         1 |
-| alessandria.it |         1 |
+| co.ke          |         1 |
+| salerno.it     |         1 |
 | com.uy         |         1 |
 | com.py         |         1 |
+| k12.or.us      |         1 |
 | pn.it          |         1 |
+| com.kh         |         1 |
+| alessandria.it |         1 |
 | k12.ny.us      |         1 |
 | vn             |         1 |
 | pw             |         1 |
@@ -215,90 +239,73 @@ mysql> SELECT host_suffix AS publicSuffix,COUNT(host_id) AS num_hosts FROM host 
 | varese.it      |         1 |
 | gb.com         |         1 |
 | org.eg         |         1 |
-| sh             |         1 |
-| bf             |         1 |
-| benevento.it   |         1 |
 | co.hu          |         1 |
 | com.fj         |         1 |
 | tv.br          |         1 |
 | waw.pl         |         1 |
-| museum         |         1 |
-| ac.za          |         1 |
+| bf             |         1 |
+| benevento.it   |         1 |
 | co.rs          |         1 |
 | school.nz      |         1 |
 | com.es         |         1 |
+| bz             |         1 |
+| ac.za          |         1 |
+| gov.tn         |         1 |
 | viterbo.it     |         1 |
 | sa.com         |         1 |
 | org.za         |         1 |
-| gov.tn         |         1 |
-| bergamo.it     |         1 |
 | net.fj         |         1 |
-| gov.uk         |         1 |
 | co.th          |         1 |
-| wa.gov.au      |         1 |
+| bergamo.it     |         1 |
 | com.hk         |         1 |
 | com.pe         |         1 |
 | co.il          |         1 |
-| se.net         |         1 |
-| vu             |         1 |
-| ae.org         |         1 |
-| tm.se          |         1 |
-| genova.it      |         1 |
-| org.fj         |         1 |
-| co.bw          |         1 |
-| org.in         |         1 |
-| hn             |         1 |
-| st             |         1 |
-| net.nz         |         1 |
-| com.ve         |         1 |
-| ar.com         |         1 |
-| com.gt         |         1 |
-| vg             |         1 |
+| wa.gov.au      |         1 |
 +----------------+-----------+
-218 rows in set (0.13 sec)
+227 rows in set (0.60 sec)
 
 
 mysql> SELECT COUNT(DISTINCT host_domain) FROM host WHERE typo3_installed;
 +-----------------------------+
 | COUNT(DISTINCT host_domain) |
 +-----------------------------+
-|                       28524 |
+|                       34652 |
 +-----------------------------+
-1 row in set (0.23 sec)
+1 row in set (0.96 sec)
 
 
 mysql> SELECT host_domain,COUNT(host_id) AS num_hosts FROM host WHERE typo3_installed=1 GROUP BY host_domain HAVING num_hosts > 100 ORDER BY num_hosts DESC;
 +------------------+-----------+
 | host_domain      | num_hosts |
 +------------------+-----------+
-| univie.ac.at     |       348 |
-| tum.de           |       226 |
-| typo3server.info |       222 |
-| tu-berlin.de     |       202 |
-| typo3.org        |       160 |
+| univie.ac.at     |       351 |
+| typo3server.info |       232 |
+| tum.de           |       228 |
+| tu-berlin.de     |       203 |
+| typo3.org        |       162 |
 | uni-wuppertal.de |       148 |
 | charite.de       |       147 |
 | apotheke.ch      |       119 |
+| uni-koeln.de     |       113 |
 | au.dk            |       111 |
-| uni-koeln.de     |       109 |
 | uni-hannover.de  |       103 |
 | drs.de           |       101 |
 +------------------+-----------+
-12 rows in set (0.51 sec)
+12 rows in set (1.13 sec)
 
 
 mysql> SELECT c.cidr_description,COUNT(h.host_id) AS num_hosts FROM server s INNER JOIN cidr c ON ((c.cidr_mask & s.server_ip) = c.cidr_ip) LEFT JOIN host h ON (s.server_id = h.fk_server_id) WHERE h.typo3_installed=1 GROUP BY c.cidr_description HAVING num_hosts > 100 ORDER BY num_hosts DESC;
 +-------------------------------------------------+-----------+
 | cidr_description                                | num_hosts |
 +-------------------------------------------------+-----------+
-| Vienna University Computer Center               |       381 |
-| TU Berlin, campus network                       |       213 |
+| Vienna University Computer Center               |       387 |
+| TU Berlin, campus network                       |       215 |
 | Republic of Slovenia - Ministry of Justice      |       176 |
 | Danish Network for Research and Education       |       158 |
 | Charite - Universitaetsmedizin Berlin           |       157 |
 | Bergische Universitaet Wuppertal                |       150 |
-| Leibniz-Rechenzentrum (LRZ)                     |       136 |
+| Leibniz-Rechenzentrum (LRZ)                     |       137 |
+| Universitaet zu Koeln                           |       116 |
 | Gottfried Wilhelm Leibniz Universitaet Hannover |       114 |
-| Universitaet zu Koeln                           |       112 |
 +-------------------------------------------------+-----------+
-22 rows in set (1.64 sec)
+9 rows in set (2.40 sec)
