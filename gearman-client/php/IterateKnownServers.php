@@ -34,7 +34,7 @@ if (is_array($gearmanStatus)) {
 		$date = new DateTime();
 
 		while ($row = $res->fetch_assoc()) {
-			if (isServerLocked($mysqli, intval($row['server_ip'])) || isServerUpdated($mysqli, intval($row['server_ip']))) {
+			if (isServerLocked($mysqli, intval($row['server_id'])) || isServerUpdated($mysqli, intval($row['server_id']))) {
 				continue;
 			} else {
 				$updateQuery = sprintf('UPDATE server SET locked=1 WHERE server_id=%u;',
