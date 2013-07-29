@@ -127,7 +127,7 @@ function isServerLocked($objMysql, $serverId) {
 }
 
 function isServerUpdated($objMysql, $serverId) {
-    $isUpdated = TRUE;
+    $isUpdated = FALSE;
     $selectQuery = sprintf('SELECT 1 FROM server WHERE server_id=%u AND updated IS NOT NULL;',
         $serverId
     );
@@ -137,7 +137,7 @@ function isServerUpdated($objMysql, $serverId) {
     if (is_object($res = $objMysql->query($selectQuery))) {
 
         if ($res->num_rows == 1) {
-            $isUpdated = FALSE;
+            $isUpdated = TRUE;
         }
         $res->close();
     }
