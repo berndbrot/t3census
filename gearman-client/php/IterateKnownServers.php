@@ -26,7 +26,7 @@ if (is_array($gearmanStatus)) {
 			.' GROUP BY s.server_id'
 			.' HAVING typo3hosts >= 1'
 			.' ORDER BY typo3hosts DESC LIMIT 300;';
-	$query = 'SELECT updated,server_id,INET_NTOA(server_ip) AS server_ip FROM server WHERE NOT locked AND updated IS NULL ORDER BY RAND() LIMIT 1000;';
+	$query = 'SELECT updated,server_id,INET_NTOA(server_ip) AS server_ip FROM server WHERE NOT locked AND updated IS NULL ORDER BY RAND() LIMIT 5000;';
 	#echo($query . PHP_EOL);
 
 	if ($res = $mysqli->query($query)) {
