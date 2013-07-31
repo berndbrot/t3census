@@ -94,7 +94,7 @@ class Typo3ArtefactsProcessor extends \T3census\Detection\AbstractProcessor impl
 				$objParser->parse();
 
 				$metaGenerator = $objParser->getMetaGenerator();
-				if (!is_null($metaGenerator) && is_string($metaGenerator) && strpos($metaGenerator, 'TYP3') !== FALSE) {
+				if (!is_null($metaGenerator) && is_string($metaGenerator) && strpos($metaGenerator, 'TYPO3') !== FALSE) {
 					$matches = array();
 					$isMatch = preg_match('/TYPO3 \d\.\d/', $metaGenerator, $matches);
 					if (is_int($isMatch) && $isMatch === 1 && is_array($matches) && count($matches) == 1) {
